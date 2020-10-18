@@ -98,7 +98,10 @@ class WalletBase(dict):
 
 
     def __contains__(self, key):
-        return dict.__contains__(self, self.Address(key))
+        try:
+            return dict.__contains__(self, self.Address(key))
+        except ValueError:
+            return False
 
 
     def __getitem__(self, key):
