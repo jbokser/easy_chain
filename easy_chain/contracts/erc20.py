@@ -44,11 +44,12 @@ class ERC20(Contract):
 
     @property
     def as_dict(self):
-        return {'name':     self.name,
-                'symbol':   self.symbol,
-                'address':  self.address,
-                'profile':  self.profile,
-                'decimals': self.decimals}
+        return self.dict_constructor([
+            'name',
+            'symbol',
+            'address',
+            'profile',
+            'decimals'])
 
 
     def __str__(self):

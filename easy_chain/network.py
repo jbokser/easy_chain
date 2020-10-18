@@ -84,6 +84,16 @@ class NetworkBase():
         return self._cahin_id
 
 
+    def dict_constructor(self, properties=[]):
+        out = {}
+        for attr_name in dir(self):
+            if attr_name[0]!='_' and attr_name not in ['as_dict', 'json']:
+                attr = getattr(self, attr_name)
+                if not '__call__' in dir(attr):
+                    if not(properties) or (attr_name in properties):
+                        out[attr_name] = attr
+
+
     @property
     def as_dict(self):
         return {'profile':  self.profile,
