@@ -1,0 +1,23 @@
+{
+    "selected_profile": "ganache",
+    "profiles": {
+        "ganache": {
+            "chain_id": 31,
+            "uri": "http://localhost:8545",
+            "poa": false
+        },
+        "rsk": {
+            "chain_id": 30,
+            "uri": "https://public-node.rsk.co"
+        },
+        "rsk_testnet": {
+            "chain_id": 31,
+            "uri": "https://public-node.testnet.rsk.co"
+        },
+        "rinkeby": {
+            "chain_id": 4,
+            "uri": "https://rinkeby.infura.io",
+            "poa": true
+        }
+    }
+}
