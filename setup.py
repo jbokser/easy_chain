@@ -30,5 +30,6 @@ setup(
         'tabulate',
         'web3'
     ],
-    scripts=['easy_chain_wallet.py']
+    scripts=['easy_chain_wallet.py',
+             'utils/ganache_tools.sh']
 )
