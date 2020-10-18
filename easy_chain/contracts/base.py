@@ -244,15 +244,20 @@ class ContractBase(object):
             gas_price         = gas_price )
 
 
+    def dict_constructor(self, properties=[]):
+        out = {}
+        for attr_name in dir(self):
+            if attr_name[0]!='_' and attr_name not in [
+                    'as_dict', 'json', 'owner', 'network']:
+                attr = getattr(self, attr_name)
+                if not '__call__' in dir(attr):
+                    if not(properties) or (attr_name in properties):
+                        out[attr_name] = attr
+
+
     @property
     def as_dict(self):
-        return {'name':      self.name,
-                'address':   self.address,
-                'abi':       self.abi,
-                'profile':   self.profile,
-                'events':    self.events,
-                'functions': self.functions,
-                'bytecode':  self.bytecode}
+        return self.dict_constructor()
 
 
     @property
@@ -353,7 +358,7 @@ if __name__ == '__main__':
     sys.path.append(os.path.dirname(os.path.dirname(__file__)))
     from network import Network
 
-    network = Network("rsk_testnet_private")
+    network = Network('rsk_testnet')
 
     kargs = {
         "network":  network,
@@ -363,4 +368,5 @@ if __name__ == '__main__':
         "abi_file": "erc20.json"}
 
     contract = Contract(**kargs)
+    contract.dict_constructor()
     

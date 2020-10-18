@@ -5,7 +5,7 @@ with open("README.md", "r") as file_:
 
 setup(
     name='easy_chain',
-    version='0.1',
+    version='0.1.1',
     packages=find_packages(),
     author='Juan S. Bokser',
     author_email='juan.bokser@gmail.com',
@@ -30,5 +30,6 @@ setup(
         'tabulate',
         'web3'
     ],
-    scripts=['easy_chain_wallet.py']
+    scripts=['easy_chain_wallet.py',
+             'utils/ganache_tools.sh']
 )

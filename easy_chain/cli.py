@@ -1,4 +1,4 @@
-import click, functools, sys
+import threading, click, functools, sys
 
 from tabulate import tabulate
 from time     import sleep
@@ -68,26 +68,70 @@ def cli_group(fnc=None, name=None):
 
 
 
-def show_transaction(network, transaction, frequency=5, times= 120):
+class Wheeler():
+
+    def __init__(self):
+
+        if hasattr(sys.stderr, "isatty") and sys.stderr.isatty():
+
+            fps = 5
+            starts = red('○ ○ ○')
+            sequence = [
+                ('\b'* 5 + red('● ○ ○')),
+                ('\b'* 5 + red('○ ● ○')),
+                ('\b'* 5 + red('○ ○ ●')),
+                ('\b'* 5 + red('○ ● ○'))]
+            ends = ('\b' * 5) +  (' ' * 5) + ('\b' * 5)
+
+        else:
+
+            fps = 1
+            starts = red('..')
+            sequence = ['.']
+            ends = ' '
+
+        self._flag =True
+
+        def task():
+            print(starts, end='', flush=True)
+            i = 0
+            while self._flag:
+                print(sequence[i], end='', flush=True)
+                i += 1
+                if i > (len(sequence)-1):
+                    i = 0
+                sleep(1/fps)
+            print(ends, end='', flush=True)
+
+        self._thread = threading.Thread(target=task)
+        self._thread.start()
+
+    def stop(self):
+        self._flag = False
+        self._thread.join()
+
+
+
+def show_transaction(network, transaction, frequency=5, times=120):
     """
     Show data of a transaction
     """
     print()
     print(' '.join([white('Transaction:'), yellow(transaction)]))
-
     print()
-    print('Getting transaction receipt ...', end='', flush=True)
+    print('Getting transaction receipt ', end='', flush=True)
+    wheeler = Wheeler()
     transaction_receipt, c = None, 1
     while transaction_receipt is None and (c < times):
         transaction_receipt = network.get_transaction_receipt(transaction)
-        print('.', end='', flush=True)
         c += 1
         if not transaction_receipt:
             sleep(frequency)
+    wheeler.stop()
     if transaction_receipt is None:
-        print(red(' Timeout!'))
+        print(red('Timeout!'))
     else:
-        print(white(' Ok!'))
+        print(white('Ok!'))
         print('')
         print('Block Number:    {}'.format(
             white(transaction_receipt['blockNumber'])))
@@ -106,7 +150,8 @@ def show_transaction(network, transaction, frequency=5, times= 120):
     return transaction_receipt
 
 
-def wait_blocks(network, top_=1, frequency=5, times= 120):
+
+def wait_blocks(network, top_=1, frequency=5, times=120):
     """ Wait for new blocks """
     current  = network.block_number
     wait_for = current + top_ 
@@ -117,24 +162,27 @@ def wait_blocks(network, top_=1, frequency=5, times= 120):
     else:
         print(' '.join([white('Wait for next block: '), yellow(wait_for)]))
     print()
-    print('Getting block ...', end='', flush=True)
+    print('Getting block ', end='', flush=True)
+    wheeler = Wheeler()
     c = 1
     while (current<wait_for) and (c < times):
         current = network.block_number
-        print('.', end='', flush=True)
         c += 1
         if current<wait_for:
             sleep(5)
+    wheeler.stop()
     if current<wait_for:
-        print(red(' Timeout!'))
+        print(red('Timeout!'))
     else:
-        print(white(' Ok!'))
+        print(white('Ok!'))
     print('')
     return current>=wait_for
 
 
+
 def print_line(len=50, symbol="_", color=grey):
     print(color(symbol*len))
+
 
 
 def print_title(title, symbol="=", color=grey):
@@ -158,10 +206,17 @@ if __name__ == '__main__':
             print(       ">>> print('This is {}!'.format({}('{}')))".format('{}', color, color.upper())           )
             print('This is {}!'.format(fnc(color.upper())))
         print()
+
     print(">>>  print_title('hello, this is a title')")
     print_title('hello, this is a title')
+
     print(">>>  print_line()")
     print_line()
 
-
-
+    print()
+    print('Wheeler test: ', end='', flush=True)
+    wheeler = Wheeler()
+    sleep(5)
+    wheeler.stop()
+    print('ok!')
+    print()

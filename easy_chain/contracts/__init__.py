@@ -98,7 +98,7 @@ class ContractsFromJsonFiles(ContractsBase):
                     data = json.load(file_)
             except:
                 data = {}
-            
+
             address = None
             if "networks" in data:
                 if data["networks"]:
@@ -117,7 +117,7 @@ class ContractsFromJsonFiles(ContractsBase):
                 abi_file      = file_name,
                 bytecode_path = dir_,
                 bytecode_file = file_name)
-            
+
             try:
                 self.append(Contract(**kargs))
             except ValueError:
