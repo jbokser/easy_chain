@@ -153,6 +153,7 @@ class Response():
                 return '{} {}'.format(
                     green('✔') if bool(self) else red('✖'),
                     white(self.value))
+            return white(str(self.value))          
         return str(self.value)
 
 
@@ -214,25 +215,34 @@ def show_transaction(network, transaction, frequency=5, times=120):
             sleep(frequency)
     wheeler.stop()
     if transaction_receipt is None:
+        response = Timeout()
         print(red('Timeout!'))
     else:
+        kargs = dict(
+                receipt = transaction_receipt,
+                block   = transaction_receipt['blockNumber'],
+                gas     = transaction_receipt['gasUsed'],
+                status  = {0: Fail(),
+                           1: Ok()}.get(
+                               transaction_receipt['status'],
+                               Response(transaction_receipt['status']))
+            )
+        if transaction_receipt['contractAddress']:
+            kargs['contract_address'] = transaction_receipt['contractAddress']
+        response = Ok(**kargs)
+
+
         print(white('Ok!'))
         print('')
-        print('Block Number:    {}'.format(
-            white(transaction_receipt['blockNumber'])))
-        print('Gas used:        {}'.format(
-            white(wei_to_str(transaction_receipt['gasUsed']))))
-        print('Status:          {}'.format(
-            {0: red('Fail'),
-             1: green('Ok')}.get(
-                transaction_receipt['status'],
-                white(transaction_receipt['status']))))
+        print('Block Number:    {}'.format(white(response.block)))
+        print('Gas used:        {}'.format(white(wei_to_str(response.gas))))
+        print('Status:          {}'.format(response.status))
         if 'contractAddress' in transaction_receipt:
             if transaction_receipt['contractAddress']:
                 print('Contract address {}'.format(
-                    yellow(transaction_receipt['contractAddress'])))
+                    yellow(response.contract_address)))
     print('')
-    return transaction_receipt
+    return response
 
 
 
@@ -257,11 +267,12 @@ def wait_blocks(network, top_=1, frequency=5, times=120):
             sleep(5)
     wheeler.stop()
     if current<wait_for:
-        print(red('Timeout!'))
+        response = Timeout()
     else:
-        print(white('Ok!'))
+        response = Ok()
+    print(response)
     print('')
-    return current>=wait_for
+    return response
 
 
 
