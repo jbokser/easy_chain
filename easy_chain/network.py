@@ -193,6 +193,8 @@ class NetworkBase():
                     value[key] = normalize(value[key])
             if 'hex' in dir(value):
                 value = value.hex()
+            if isinstance(value, list):
+                value = [normalize(x) for x in value]
             return value
 
         try:
