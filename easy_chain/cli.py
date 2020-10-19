@@ -292,6 +292,13 @@ def print_title(title, symbol="=", color=grey):
 
 
 
+def pause():
+    if OK_COLOR:
+        print()
+    cli.pause()
+
+
+
 if __name__ == '__main__':
     print("File: {}, Ok!".format(repr(__file__)))
 
