@@ -243,12 +243,17 @@ class NetworkBase():
 
         value = self.web3.toWei(value, unit)
 
-        gas_estimate = contract_function.estimateGas()
+        try:
+            gas_estimate = contract_function.estimateGas()
+        except ValueError:
+            gas_estimate = None
 
         if not gas_limit:
+            if not gas_estimate:
+                raise ValueError('gas_limit')
             gas_limit = gas_estimate
 
-        if gas_estimate > gas_limit:
+        if gas_estimate and gas_estimate > gas_limit:
             raise Exception("Gas estimated is bigger than gas limit")
 
         if not gas_price:
