@@ -207,6 +207,15 @@ class ContractBase(object):
         return self._function(fnc_name, *args).call()
 
 
+    def transaction_data(self,
+                 fnc_name,
+                 *args):
+
+        contract_function = self._function(fnc_name, *args)
+        return contract_function.buildTransaction()['data']
+
+
+
     def transaction(self,
                  sign_callback,
                  from_address,
