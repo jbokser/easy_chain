@@ -15,12 +15,13 @@ start_ganache () {
 }
 
 GANACHE_TOOLS_URL=http://localhost:8545
-GANACHE_TOOLS_ID=0
+GANACHE_TOOLS_STEP=0
 
 method () {
-    GANACHE_TOOLS_ID=$((GANACHE_TOOLS_ID+1))
-    REQUEST="{\"id\":$GANACHE_TOOLS_ID,\"jsonrpc\":\"2.0\",\"method\":\"$1\",\"params\":[$2]}"
+    GANACHE_TOOLS_STEP=$((GANACHE_TOOLS_ID+1))
+    REQUEST="{\"id\":1337,\"jsonrpc\":\"2.0\",\"method\":\"$1\",\"params\":[$2]}"
     RESPONSE=`curl -s -H "Content-Type: application/json" -X POST --data "$REQUEST" $GANACHE_TOOLS_URL`
+    echo " 🠶 $GANACHE_TOOLS_STEP"
     echo " ↘ $REQUEST"
     echo " ↙ $RESPONSE"
 }
