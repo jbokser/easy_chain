@@ -101,7 +101,19 @@ class ContractBase(object):
     @property
     def events(self):
         return [ e.__name__ for e in self._contract.events ]
-    
+
+
+    def get_events_args(self, event_name, transaction):
+        receipt = self._network.get_transaction_receipt(transaction)
+        events = []
+        if receipt and 'blockNumber' in receipt:
+            events = [ e for e in self.get_events(
+                events_names = [event_name],
+                from_block   = receipt['blockNumber'],
+                to_block     = receipt['blockNumber'],
+                step         = 1) if e["transactionHash"]==transaction]
+        return [ e['args'] for e in events ]
+
 
     def get_events(self,
                    events_names = [],
@@ -205,6 +217,15 @@ class ContractBase(object):
 
     def function_call(self, fnc_name, *args):
         return self._function(fnc_name, *args).call()
+
+
+    def transaction_data(self,
+                 fnc_name,
+                 *args):
+
+        contract_function = self._function(fnc_name, *args)
+        return contract_function.buildTransaction()['data']
+
 
 
     def transaction(self,

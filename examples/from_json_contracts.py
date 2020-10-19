@@ -8,7 +8,7 @@ from easy_chain.contracts import ContractsFromJsonFiles
 
 network = Network()
 
-dir_ = "easy_chain/data/contracts"
+dir_ = "../easy_chain/data/contracts"
 contracts = ContractsFromJsonFiles(network, dir_ )
 
 table = [ [c.name, len(c.events), len(c.functions), c.address] for c in contracts ]

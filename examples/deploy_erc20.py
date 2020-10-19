@@ -24,9 +24,10 @@ def deploy():
 
     transaction = token.deploy(wallet.sign, wallet.default, gas_limit = 3500000)
 
-    receipt = show_transaction(network, transaction)
+    response = show_transaction(network, transaction)
 
-    if not(receipt and 'contractAddress' in receipt):
+
+    if not response.contract_address:
         print("Can't get the contract address")
         return
 
@@ -34,11 +35,11 @@ def deploy():
         print("Can't get the next block")
         return
 
-    token.address = receipt['contractAddress']
+    token.address = response.contract_address
 
     transaction = token.mint(wallet.sign, wallet.default, wallet.default, 123, gas_limit = 3500000)
 
-    receipt = show_transaction(network, transaction)
+    show_transaction(network, transaction)
 
     if not wait_blocks(network):
         print("Can't get the next block")
