@@ -127,6 +127,7 @@ class NetworkBase():
         if poa:
             self.web3.middleware_onion.inject(
                 geth_poa_middleware, layer=0)
+        self._is_connected = self.web3.isConnected()
 
 
     @property
@@ -171,7 +172,9 @@ class NetworkBase():
     @property
     def is_connected(self):
         """ Returns if connected """
-        return self.web3.isConnected()
+        if self._is_connected:
+             self._is_connected = self.web3.isConnected()
+        return self._is_connected
 
 
     def __bool__(self):
