@@ -11,26 +11,83 @@ from conf           import get as config
 from simple_decoder import hash_
 
 
-def config_call_back_first(options):
-    return {
-        'network_profile': options['selected_profile']
-    }
 
-def config_call_back_second(options):
-    profiles = options['profiles']
-    opt      = profiles[network_profile]
-    return {
-        'network_conf':     opt,
-        'network_profiles': profiles
-    }
+class NetworkConf():
 
-for call_back in [config_call_back_first,
-                  config_call_back_second]:
-    config(locals(),
-           call_back,
-           ['network.json', 'network_default.json'],
-           'network',
-           env_pre = 'wallet')
+    def __init__(self):
+        self._load()
+
+    def _load(self, selected_profile=None):
+
+        data = {}
+
+        def call_back(options):
+            if selected_profile != None:
+                options['selected_profile'] = selected_profile
+            network_profile = options['selected_profile']
+            network_conf    = options['profiles'][network_profile]
+            return {
+                'network_profile': network_profile,
+                'network_conf':    network_conf
+            }
+
+        config(
+            data,
+            call_back,
+            ['network.json', 'network_default.json'],
+            'network',
+            env_pre = 'wallet')
+
+        self._network_profile = data['network_profile']
+        self._network_conf    = data['network_conf']
+        self._config_file     = data['config_file']
+        self._envs            = data['envs']
+
+        data = {}
+
+        def call_back_2(options):
+            return {
+                'network_profiles': options['profiles']
+            }
+
+        config(
+            data,
+            call_back_2,
+            ['network.json', 'network_default.json'],
+            'network',
+            env_pre = '')
+
+        self._network_profiles = data['network_profiles']
+
+    @property
+    def selected_profile(self):
+        return self._network_profile
+
+    @selected_profile.setter
+    def selected_profile(self, value):
+        if not value in self.network_profiles:
+            raise ValueError
+        self._load(value)
+
+    @property
+    def network_conf(self):
+        return self._network_conf
+
+    @property
+    def config_file(self):
+        return self._config_file
+
+    @property
+    def envs(self):
+        return self._envs
+
+    @property
+    def network_profiles(self):
+        return self._network_profiles
+
+
+
+network_conf = NetworkConf()
 
 
 
@@ -282,10 +339,10 @@ class Network(NetworkBase):
     def __init__(self, profile=None, uri=None, chain_id=None, poa=False):
 
         if not profile:
-            profile = network_profile
+            profile = network_conf.selected_profile
         
-        if profile in network_profiles:
-            kargs = network_profiles[profile]
+        if profile in network_conf.network_profiles:
+            kargs = network_conf.network_profiles[profile]
         else:
             kargs = {}
 
