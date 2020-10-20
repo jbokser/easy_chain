@@ -36,7 +36,7 @@ class NetworkConf():
             call_back,
             ['network.json', 'network_default.json'],
             'network',
-            env_pre = 'wallet')
+            env_pre = 'EASY_CHAIN')
 
         self._network_profile = data['network_profile']
         self._network_conf    = data['network_conf']
