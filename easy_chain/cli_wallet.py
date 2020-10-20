@@ -10,30 +10,20 @@ from network import wei_to_str, units
 
 
 
-def WalletCLI(network, wallet, tokens=[], envs={}):
+def WalletCLI(group, network, wallet, tokens=[], envs={}):
 
-
-    @cli_group()
-    def wallet_cli():
-        """
-        Simple Easy Chain CLI Wallet
-
-        Develped by Juan S. Bokser (2019)
-        """
-
-
-    @cli_group(wallet_cli, 'addr')
+    @cli_group(group, 'addr')
     def wallet_addresses():
         """ Referred to addresses """
 
 
     if tokens:
-        @cli_group(wallet_cli, 'token')
+        @cli_group(group, 'token')
         def wallet_token():
             """ Referred to tokens"""
 
 
-    @cli_group(wallet_cli, 'node')
+    @cli_group(group, 'node')
     def wallet_node():
         """ Referred to the node"""
 
@@ -153,7 +143,7 @@ def WalletCLI(network, wallet, tokens=[], envs={}):
         print(white('timestamp   = {}').format(network.block_timestamp(n)))
 
 
-    @wallet_cli.command(name='send')
+    @group.command(name='send')
     @cli.argument('to_address')
     @cli.argument('value', type=int)
     @cli.argument('unit', default='wei', type=cli.Choice(units))
@@ -288,8 +278,6 @@ def WalletCLI(network, wallet, tokens=[], envs={}):
                 print(grey("(none)"))
 
             print()
-
-    return wallet_cli
 
 
 
