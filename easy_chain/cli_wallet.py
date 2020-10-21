@@ -3,14 +3,14 @@ from os.path import dirname
 
 path.append(dirname(__file__))
 
-from cli     import yellow, white, red, green, grey, show_transaction
+from cli     import yellow, white, red, grey, show_transaction, Response
 from cli     import cli_group, tabulate, cli, validate_connected, print_title
 from wallet  import BadPassword
 from network import wei_to_str, units
 
 
 
-def WalletCLI(group, network, wallet, tokens=[], envs={}):
+def WalletCLI(group, network, wallet, tokens=[]):
 
     @cli_group(group, 'addr')
     def wallet_addresses():
@@ -21,11 +21,6 @@ def WalletCLI(group, network, wallet, tokens=[], envs={}):
         @cli_group(group, 'token')
         def wallet_token():
             """ Referred to tokens"""
-
-
-    @cli_group(group, 'node')
-    def wallet_node():
-        """ Referred to the node"""
 
 
     @wallet_addresses.command(name='del')
@@ -86,11 +81,11 @@ def WalletCLI(group, network, wallet, tokens=[], envs={}):
             for d in summary:
                 for k in d.keys():
                     if type(d[k])==bool:
-                        d[k] = white('yes') if d[k] else grey('no')
+                        d[k] = Response('yes') if d[k] else Response('no')
                 address = d['address']
                 if d['default']:
                     d['address'] = yellow(address)
-                d['balance'] = grey('na')
+                d['balance'] = Response(None)
                 if network.is_connected:
                     d['balance'] = white(wei_to_str(network.balance(address)))
 
@@ -126,23 +121,6 @@ def WalletCLI(group, network, wallet, tokens=[], envs={}):
             wei_to_str(network.balance(address))))
 
 
-    @wallet_node.command(name='gas')
-    @validate_connected(network)
-    def wallet_gas_price():
-        """ Show the gas price """
-        print(white('gasPrice = {}').format(wei_to_str(network.gas_price)))
-        print(white('minimum  = {}').format(wei_to_str(network.minimum_gas_price)))
-
-
-    @wallet_node.command(name='block')
-    @validate_connected(network)
-    def wallet_block_number():
-        """ Last block """
-        n = network.block_number
-        print(white('blockNumber = {}').format(n))
-        print(white('timestamp   = {}').format(network.block_timestamp(n)))
-
-
     @group.command(name='send')
     @cli.argument('to_address')
     @cli.argument('value', type=int)
@@ -171,17 +149,6 @@ def WalletCLI(group, network, wallet, tokens=[], envs={}):
             raise cli.ClickException(red('Bad private key password'))
 
         show_transaction(network, transaction)
-
-
-    if envs:
-        @wallet_node.command(name='envs')
-        def wallet_envs():
-            """ Show environment variables to use """
-            print()
-            print(tabulate(envs.items(),
-                headers = ['Environment variable',
-                           'Default value']))
-            print()
 
 
     if tokens:
@@ -255,7 +222,7 @@ def WalletCLI(group, network, wallet, tokens=[], envs={}):
                              'balance_fnc': t.balance} for t in tokens]
 
                 for d in summary:
-                    d['balance'] = grey('na')
+                    d['balance'] = Response(None)
                     if network.is_connected and wallet:
                         d['balance'] = white(  d['balance_fnc'](wallet.default)  )
                     del d['balance_fnc']
