@@ -65,7 +65,12 @@ class NetworkConf():
         for profile in profiles.keys():
             self._profiles_envs[profile] = {}
             for env, value in envs.items():
-                if profile.upper() in env:
+                
+                valid = ['_CHAIN_ID', '_POA', '_URI']
+                pre = 'EASY_CHAIN_NETWORK_PROFILES_'
+                valid = [ pre + profile.upper() + n for n in valid ]
+
+                if env in valid:
                     self._profiles_envs[profile][env] = value
 
         self._network_profiles = profiles
@@ -387,3 +392,4 @@ if __name__ == '__main__':
     for p in properties:
         value = getattr(network, p)
         print("network.{} = {}".format(p, repr(value)))
+    print(network_conf.profile_envs('rsk'))
