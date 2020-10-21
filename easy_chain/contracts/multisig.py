@@ -10,10 +10,8 @@ class MultiSigWallet(Contract):
         Contract.__init__(self, network,
                           address       = address,
                           name          = name,
-                          abi_path      = '{work_dir}/data/contracts',
-                          abi_file      = 'multisig.json',
-                          bytecode_path = '{work_dir}/data/contracts',
-                          bytecode_file = 'multisig.json')
+                          json_path     = '{work_dir}/data/contracts',
+                          json_file     = 'multisig.json')
 
 
     def __str__(self):

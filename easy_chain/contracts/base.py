@@ -316,49 +316,84 @@ class Contract(ContractBase):
                  address       = None,
                  abi           = None,
                  name          = None,
-                 abi_path      = '{work_dir}/data/contracts/{profile}',
-                 abi_file      = '{name}.json',
                  bytecode      = None,
-                 bytecode_path = '{work_dir}/data/contracts/{profile}',
+                 json_path     = None,
+                 json_file     = None,
+                 abi_path      = None,
+                 abi_file      = None,
+                 bytecode_path = None,
                  bytecode_file = None):
 
-        if not abi:
-            abi_full_path = abi_path + '/' + abi_file
-            abi_full_path = abi_full_path.format(
+        if not name and json_path and json_file:
+            json_full_path = json_path + '/' + json_file
+            json_full_path = json_full_path.format(
                 work_dir = work_dir,
                 profile  = network.profile,
-                name     = '{name}')
-            if name:
-                abi_full_path = abi_full_path.format(
-                    name = name)
-            if not '{name}' in abi_full_path:
-                with open(abi_full_path, 'r') as file_:
+                uuid     = network.uuid)
+            try:
+                with open(json_full_path, 'r') as file_:
                     data = json.load(file_)
-                if isinstance(data, dict) and 'abi' in data:
-                    abi = data['abi']
-                if isinstance(data, list):
-                    abi = data
+            except:
+                data = None
+            if isinstance(data, dict) and 'contractName' in data:
+                name = data['contractName']
 
-        if not bytecode and bytecode_file:
-            bytecode_full_path = bytecode_path + '/' + bytecode_file
-            bytecode_full_path = bytecode_full_path.format(
-                work_dir = work_dir,
-                profile  = network.profile,
-                name     = '{name}')
-            if name:
+        if not abi:
+            if json_path and not abi_path:
+                abi_path = json_path
+            if json_file and not abi_file:
+                abi_file = json_file
+            if abi_path and abi_file:
+                abi_full_path = abi_path + '/' + abi_file
+                abi_full_path = abi_full_path.format(
+                    work_dir = work_dir,
+                    profile  = network.profile,
+                    uuid     = network.uuid,
+                    name     = '{name}')
+                if name:
+                    abi_full_path = abi_full_path.format(
+                        name = name)
+                if not '{name}' in abi_full_path:
+                    try:
+                        with open(abi_full_path, 'r') as file_:
+                            data = json.load(file_)
+                    except:
+                        data = None
+                    if isinstance(data, dict) and 'abi' in data:
+                        abi = data['abi']
+                    if isinstance(data, list):
+                        abi = data
+
+        if not bytecode:
+            if json_path and not bytecode_path:
+                bytecode_path = json_path
+            if json_file and not bytecode_file:
+                bytecode_file = json_file
+            if bytecode_path and bytecode_file:
+                bytecode_full_path = bytecode_path + '/' + bytecode_file
                 bytecode_full_path = bytecode_full_path.format(
-                    name = name)
-            if not '{name}' in abi_full_path:
-                try:
-                    with open(bytecode_full_path, 'r') as file_:
-                        data = json.load(file_)
-                except:
-                    with open(bytecode_full_path, 'r') as file_:
-                        data = file_.read()
-                if isinstance(data, dict) and 'bytecode' in data:
-                    bytecode = data['bytecode']
-                else:
-                    bytecode = data
+                    work_dir = work_dir,
+                    profile  = network.profile,
+                    uuid     = network.uuid,
+                    name     = '{name}')
+                if name:
+                    bytecode_full_path = bytecode_full_path.format(
+                        name = name)
+                if not '{name}' in abi_full_path:
+                    try:
+                        with open(bytecode_full_path, 'r') as file_:
+                            data = json.load(file_)
+                    except:
+                        try:
+                            with open(bytecode_full_path, 'r') as file_:
+                                data = file_.read()
+                        except:
+                            data = None
+                    if data:
+                        if isinstance(data, dict) and 'bytecode' in data:
+                            bytecode = data['bytecode']
+                        else:
+                            bytecode = data
 
         if not abi:
             raise ValueError('No ABI')
