@@ -55,9 +55,23 @@ class NetworkConf():
             call_back_2,
             ['network.json', 'network_default.json'],
             'network',
-            env_pre = '')
+            env_pre = 'EASY_CHAIN')
 
-        self._network_profiles = data['network_profiles']
+        envs     = data['envs']
+        profiles = data['network_profiles']
+        
+        self._profiles_envs = {}
+
+        for profile in profiles.keys():
+            self._profiles_envs[profile] = {}
+            for env, value in envs.items():
+                if profile.upper() in env:
+                    self._profiles_envs[profile][env] = value
+
+        self._network_profiles = profiles
+
+    def profile_envs(self, profile):
+        return self._profiles_envs.get(profile, {})
 
     @property
     def selected_profile(self):

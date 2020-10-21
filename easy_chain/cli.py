@@ -75,8 +75,7 @@ def validate_connected(network):
 def cli_group(fnc=None, name=None):
     if not fnc:
         return click.group(
-            context_settings=CONTEXT_SETTINGS,
-            invoke_without_command=True)
+            context_settings=CONTEXT_SETTINGS)
     return fnc.group(context_settings=CONTEXT_SETTINGS, name = name)
 
 

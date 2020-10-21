@@ -16,10 +16,8 @@ class ERC20(Contract):
         Contract.__init__(self, network,
                           address       = address,
                           name          = name,
-                          abi_path      = '{work_dir}/data/contracts',
-                          abi_file      = 'erc20.json',
-                          bytecode_path = '{work_dir}/data/contracts',
-                          bytecode_file = 'erc20.json')
+                          json_path     = '{work_dir}/data/contracts',
+                          json_file     = 'erc20.json')
 
 
     def _load(self):
