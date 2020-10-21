@@ -30,6 +30,6 @@ setup(
         'tabulate',
         'web3'
     ],
-    scripts=['easy_chain',
+    scripts=['easy_chain_cli',
              'utils/ganache_tools.sh']
 )
