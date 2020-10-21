@@ -38,13 +38,13 @@ def get(out = {},
         file_ = file_list.pop(0)
 
         try:
-            with open(file_) as f:
+            with open(file_, 'r') as f:
                 config_options = json.load(f)
         except JSONDecodeError as e:
             print('Error in "{}", {}'.format(file_, str(e)), file=stderr)
             exit(1)
         except Exception as e:
-            config_options = None
+            config_options = {}
     
     if config_options and file_ != first_file:
 
@@ -56,6 +56,8 @@ def get(out = {},
                     raise
 
         copyfile(file_, first_file)
+
+    config_options_json = json.dumps(config_options, indent=4, sort_keys=True)
 
     try:
         data = call_back(config_options)
@@ -73,18 +75,27 @@ def get(out = {},
         print(message, file=stderr)
         exit(1)
 
-    if 'envs' in out:
-        env_dict = out['envs']
-    else:
-        env_dict={}
+    new_config_options_json = json.dumps(config_options, indent=4, sort_keys=True)
 
-    check_env(data, env_pre =env_pre, env_dict=env_dict)
+    if  new_config_options_json!=config_options_json:
+        with open(first_file, 'w') as f:
+            f.write(new_config_options_json)
+
+    if env_pre:
+
+        if 'envs' in out:
+            env_dict = out['envs']
+        else:
+            env_dict={}
+
+        check_env(data, env_pre=env_pre, env_dict=env_dict)
 
     for key, value in data.items():
         out[key] = value
 
     out['config_file'] = file_
-    out['envs']        = env_dict
+    if env_pre:      
+        out['envs']    = env_dict
 
     return out
 

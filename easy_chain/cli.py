@@ -30,6 +30,12 @@ grey   = color_base('bright_black')
 
 
 
+def show_help(command_line):
+    with cli.Context(command_line) as ctx:
+        cli.echo(command_line.get_help(ctx)) 
+
+
+
 def wei_to_tuple(value):
     """ wei --> (value, str_unit) """
     value    = int(value)
@@ -68,7 +74,9 @@ def validate_connected(network):
 
 def cli_group(fnc=None, name=None):
     if not fnc:
-        return click.group(context_settings=CONTEXT_SETTINGS)
+        return click.group(
+            context_settings=CONTEXT_SETTINGS,
+            invoke_without_command=True)
     return fnc.group(context_settings=CONTEXT_SETTINGS, name = name)
 
 
@@ -86,7 +94,7 @@ class Wheeler():
                 ('\b'* 5 + red('○ ● ○')),
                 ('\b'* 5 + red('○ ○ ●')),
                 ('\b'* 5 + red('○ ● ○'))]
-            ends = ('\b' * 5) +  (' ' * 5) + ('\b' * 5)
+            ends = ('\b' * len(starts)) +  (' ' * len(starts)) + ('\b' * len(starts))
 
         else:
 

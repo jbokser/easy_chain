@@ -48,12 +48,13 @@ class Tokens(list):
 
 if __name__ == '__main__':
     print("File: {}, Ok!".format(repr(__file__)))
-    from network import Network, network_profiles
+    from network import Network, network_conf
     table = []
-    for profile in network_profiles.keys():
+    for profile in network_conf.network_profiles.keys():
         network = Network(profile)
         tokens = Tokens(network)
-        table += [ t.as_dict for t in tokens ]
+        for t in tokens:
+            table.append(t.as_dict)
     print()
     print(tabulate(table, headers={}))
     print()

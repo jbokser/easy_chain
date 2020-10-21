@@ -274,6 +274,7 @@ class ContractBase(object):
                 if not '__call__' in dir(attr):
                     if not(properties) or (attr_name in properties):
                         out[attr_name] = attr
+        return out
 
 
     @property

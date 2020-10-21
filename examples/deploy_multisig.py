@@ -3,24 +3,15 @@ import sys, os, json
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from easy_chain.cli       import show_transaction, wait_blocks, print_title, print_line, pause, white
-from easy_chain.wallet    import Wallet
+from easy_chain.wallet    import WalletGanache
 from easy_chain.network   import Network, wei_to_str
 from easy_chain.contracts import MultiSigWallet
 
 network = Network('ganache')
 
-# Non persistent wallet
-wallet  = Wallet() 
-
-# Add first deterministic gananche address
-wallet.add_priv_key(
-    "0x4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d",
-    encrypt=False, name='ganache-0')
-
-# Add second deterministic gananche address
-wallet.add_priv_key(
-    "0x6cbed15c793ce57650b9877cf6fa156fbef513c4e6134f022a85b1ffdd59b2a1",
-    encrypt=False, name='ganache-1')
+# Non persistent wallet with the deterministic Gananche address
+wallet = WalletGanache() 
+wallet.default = wallet.Address(1)
 
 
 
@@ -36,8 +27,8 @@ def deploy():
 
     print_title('Deploy Multisig')
 
-    accounts = [wallet.Address('ganache-0'),
-                wallet.Address('ganache-1')] 
+    accounts = [wallet.Address(1),
+                wallet.Address(2)] 
 
     required_confirmations = 2
 
@@ -128,7 +119,7 @@ def deploy():
 
     print_title('Confirm transaction')
 
-    wallet.default = wallet.Address('ganache-1')
+    wallet.default = wallet.Address(2)
 
     transaction = multisig.confirm_transaction(
         wallet.sign,
