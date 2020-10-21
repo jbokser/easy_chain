@@ -39,7 +39,7 @@ def version():
     print(__version__)
 
 @cli.command(name='info')
-def invo():
+def info():
     """ Show some info and exit. """
     print('{} {}'.format(grey('Deafult network: '),
         white(network.profile)))
