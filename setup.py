@@ -1,11 +1,12 @@
 from setuptools import setup, find_packages
+from easy_chain import __version__
 
 with open("README.md", "r") as file_:
     long_description = file_.read()
 
 setup(
     name='easy_chain',
-    version='0.1.3',
+    version=__version__,
     packages=find_packages(),
     author='Juan S. Bokser',
     author_email='juan.bokser@gmail.com',
