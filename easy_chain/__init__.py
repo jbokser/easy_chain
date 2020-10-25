@@ -4,7 +4,7 @@ import sys
 from os.path import dirname, abspath
 sys.path.append(dirname(abspath(__file__)))
 
-from wallet  import Wallet, WalletGanache
+from wallet  import Wallet, WalletGanache, BadPassword
 from network import Network, network_conf
 from tokens  import Tokens
 
