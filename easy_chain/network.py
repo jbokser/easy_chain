@@ -392,4 +392,3 @@ if __name__ == '__main__':
     for p in properties:
         value = getattr(network, p)
         print("network.{} = {}".format(p, repr(value)))
-    print(network_conf.profile_envs('rsk'))
