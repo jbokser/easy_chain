@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-import sys, os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import sys
+from os.path import dirname, abspath
+sys.path.append(dirname(dirname(abspath(__file__))))
 
 from easy_chain.network   import Network
 from easy_chain.contracts import ERC20
