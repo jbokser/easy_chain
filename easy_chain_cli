@@ -2,9 +2,7 @@
 from easy_chain.cli         import cli_group, cli, grey, white, Response
 from easy_chain.cli_wallet  import WalletCLI
 from easy_chain.cli_network import NetworkCLI
-from easy_chain.wallet      import Wallet
-from easy_chain.network     import Network, network_conf
-from easy_chain.tokens      import Tokens
+from easy_chain             import Wallet, Network, network_conf, Tokens
 from easy_chain             import __version__
 
 

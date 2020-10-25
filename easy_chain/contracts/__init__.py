@@ -128,9 +128,9 @@ class ContractsFromJsonFiles(ContractsBase):
 
 if __name__ == '__main__':
     print("File: {}, Ok!".format(repr(__file__)))
-    from network import Network, network_profiles
+    from network import Network, network_conf
     table = []
-    for profile in network_profiles.keys():
+    for profile in network_conf.network_profiles.keys():
         network = Network(profile)
         contracts = Contracts(network)
         table += [ c.as_dict for c in contracts ]

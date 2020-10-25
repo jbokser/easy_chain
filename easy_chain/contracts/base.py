@@ -390,8 +390,9 @@ class Contract(ContractBase):
                         except:
                             data = None
                     if data:
-                        if isinstance(data, dict) and 'bytecode' in data:
-                            bytecode = data['bytecode']
+                        if isinstance(data, dict):
+                            if 'bytecode' in data:
+                                bytecode = data['bytecode']
                         else:
                             bytecode = data
 
