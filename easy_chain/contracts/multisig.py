@@ -1,4 +1,4 @@
-from base import Contract
+from contract_base import Contract
 
 
 

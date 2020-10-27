@@ -1,13 +1,22 @@
 import sys, os, json
 from tabulate import tabulate
 from os       import listdir
-from os.path  import isfile, join
+from os.path  import isfile, join, dirname, abspath
 
-sys.path.append(os.path.dirname(__file__))
-sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+bkpath   = sys.path[:]
+base_dir = dirname(abspath(__file__))
+sys.path.append(base_dir)
 
-from base import *
+from contract_base import *
+
+sys.path = bkpath
+sys.path.append(dirname(base_dir))
+
 from conf import get as config
+
+sys.path = bkpath
+
+
 
 def config_call_back(options):
     return {
@@ -24,19 +33,30 @@ config(locals(),
 
 def get_modules():
 
-    exclude       = ['base.py']
+    exclude       = ['contract_base.py']
     mypath        = os.path.dirname(__file__)
     files         = [f for f in os.listdir(mypath) if os.path.isfile(os.path.join(mypath, f))]
     files         = [f for f in files if f not in exclude]
     modules_names = [ n[:-3] for n in files if n[-3:] =='.py' and n[:1]!='_']
 
+    sys.path = bkpath
+    sys.path.append(base_dir)
+    sys.path = sorted(list(set(sys.path[:])), key = lambda x: [
+        'easy_chain/contracts' in x, x], reverse=True)
+
     for name in modules_names:
+        sys.path.append(base_dir)
         obj = __import__(name, globals(), locals())
+        sys.path = bkpath
         for n in dir(obj):
             if n[:1]!='_':
                 sub_obj = getattr(obj, n)
                 if sub_obj!=Contract:
                     globals()[n] = sub_obj
+
+    sys.path = bkpath
+
+
 
 get_modules()
 del get_modules
