@@ -1,13 +1,19 @@
-import json
+import sys, json
 from sys      import path
 from os       import listdir
-from os.path  import dirname
 from tabulate import tabulate
+from os.path  import dirname, abspath
 
-path.append(dirname(__file__))
+bkpath   = sys.path[:]
+base_dir = dirname(abspath(__file__))
+sys.path.append(base_dir)
 
 from conf      import get as config
 from contracts import ERC20
+
+sys.path = bkpath
+
+
 
 def config_call_back(options):
     return {

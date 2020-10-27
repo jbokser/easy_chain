@@ -1,13 +1,22 @@
 import sys, os, json
 from tabulate import tabulate
 from os       import listdir
-from os.path  import isfile, join
+from os.path  import isfile, join, dirname, abspath
 
-sys.path.append(os.path.dirname(__file__))
-sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+bkpath   = sys.path[:]
+base_dir = dirname(abspath(__file__))
+sys.path.append(base_dir)
 
 from base import *
+
+sys.path = bkpath
+sys.path.append(dirname(base_dir))
+
 from conf import get as config
+
+sys.path = bkpath
+
+
 
 def config_call_back(options):
     return {
@@ -31,7 +40,9 @@ def get_modules():
     modules_names = [ n[:-3] for n in files if n[-3:] =='.py' and n[:1]!='_']
 
     for name in modules_names:
+        sys.path.append(base_dir)
         obj = __import__(name, globals(), locals())
+        sys.path = bkpath
         for n in dir(obj):
             if n[:1]!='_':
                 sub_obj = getattr(obj, n)

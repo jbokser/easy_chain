@@ -1,12 +1,16 @@
-from sys     import path
-from os.path import dirname
+import sys
+from os.path import dirname, abspath
 
-path.append(dirname(__file__))
+bkpath   = sys.path[:]
+base_dir = dirname(abspath(__file__))
+sys.path.append(base_dir)
 
 from cli     import yellow, white, red, grey, show_transaction, Response
 from cli     import cli_group, tabulate, cli, validate_connected, print_title
 from wallet  import BadPassword
 from network import wei_to_str, units
+
+sys.path = bkpath
 
 
 

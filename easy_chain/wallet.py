@@ -1,5 +1,5 @@
 from click                import prompt
-from os.path              import dirname, abspath, expanduser
+from os.path              import dirname, abspath, expanduser 
 from sys                  import path, argv
 from web3                 import Web3
 from web3.exceptions      import InvalidAddress
@@ -9,11 +9,14 @@ from web3.auto            import w3
 from eth_account.messages import encode_defunct
 from os                   import environ
 
-
-path.append(dirname(__file__))
+bkpath   = path[:]
+base_dir = dirname(abspath(__file__))
+path.append(base_dir)
 
 from simple_decoder import encode, decode
 from dict_tools     import PersistentDict, reverse_dcit
+
+path = bkpath
 
 
 

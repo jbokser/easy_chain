@@ -1,14 +1,17 @@
-import json, datetime
+import sys, json, datetime
 from web3            import Web3, HTTPProvider
 from web3.exceptions import InvalidAddress, ValidationError, BadFunctionCallOutput, TransactionNotFound
 from web3.middleware import geth_poa_middleware
-from sys             import path
-from os.path         import dirname
+from os.path         import dirname, abspath
 
-path.append(dirname(__file__))
+bkpath   = sys.path[:]
+base_dir = dirname(abspath(__file__))
+sys.path.append(base_dir)
 
 from conf           import get as config
 from simple_decoder import hash_
+
+sys.path = bkpath
 
 
 
