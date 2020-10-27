@@ -7,7 +7,7 @@ bkpath   = sys.path[:]
 base_dir = dirname(abspath(__file__))
 sys.path.append(base_dir)
 
-from base import *
+from contract_base import *
 
 sys.path = bkpath
 sys.path.append(dirname(base_dir))
@@ -33,11 +33,16 @@ config(locals(),
 
 def get_modules():
 
-    exclude       = ['base.py']
+    exclude       = ['contract_base.py']
     mypath        = os.path.dirname(__file__)
     files         = [f for f in os.listdir(mypath) if os.path.isfile(os.path.join(mypath, f))]
     files         = [f for f in files if f not in exclude]
     modules_names = [ n[:-3] for n in files if n[-3:] =='.py' and n[:1]!='_']
+
+    sys.path = bkpath
+    sys.path.append(base_dir)
+    sys.path = sorted(list(set(sys.path[:])), key = lambda x: [
+        'easy_chain/contracts' in x, x], reverse=True)
 
     for name in modules_names:
         sys.path.append(base_dir)
@@ -48,6 +53,10 @@ def get_modules():
                 sub_obj = getattr(obj, n)
                 if sub_obj!=Contract:
                     globals()[n] = sub_obj
+
+    sys.path = bkpath
+
+
 
 get_modules()
 del get_modules
