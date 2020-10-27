@@ -1,12 +1,15 @@
 from setuptools import setup, find_packages
-from easy_chain import __version__
+from easy_chain import __version__ as version
 
 with open("README.md", "r") as file_:
     long_description = file_.read()
 
+with open("requirements.txt", "r") as file_:
+    requirements = file_.read().split()
+
 setup(
     name='easy_chain',
-    version=__version__,
+    version=version,
     packages=find_packages(),
     author='Juan S. Bokser',
     author_email='juan.bokser@gmail.com',
@@ -26,11 +29,7 @@ setup(
                        "data/conf/*.json"]
     },
     python_requires='>=3.6',
-    install_requires=[
-        'click',
-        'tabulate',
-        'web3'
-    ],
+    install_requires=requirements,
     scripts=['easy_chain_cli',
              'utils/ganache_tools.sh']
 )
