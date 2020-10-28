@@ -1,5 +1,7 @@
 __version__ = '0.1.8b'
 
+version = __version__
+
 import sys
 from os.path import dirname, abspath
 

@@ -3,7 +3,7 @@ from easy_chain.cli         import cli_group, cli, grey, white, Response
 from easy_chain.cli_wallet  import WalletCLI
 from easy_chain.cli_network import NetworkCLI
 from easy_chain             import Wallet, Network, network_conf, Tokens
-from easy_chain             import __version__
+from easy_chain             import version
 
 
 network = Network()
@@ -32,9 +32,9 @@ def network_cli():
 NetworkCLI(network_cli, network, network_conf)
 
 @cli.command(name='version')
-def version():
+def show_version():
     """ Show version and exit. """
-    print(__version__)
+    print(version)
 
 @cli.command(name='info')
 def info():
