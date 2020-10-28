@@ -219,6 +219,10 @@ class ContractBase(object):
         return self._function(fnc_name, *args).call()
 
 
+    def function_call_from_address_1(self, fnc_name, *args):
+        return self._function(fnc_name, *args).call({'from': "0x" + "0" * 39 + "1"})
+
+
     def transaction_data(self,
                  fnc_name,
                  *args):
