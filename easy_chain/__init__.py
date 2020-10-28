@@ -1,15 +1,17 @@
-__version__ = '0.1.7'
+__version__ = '0.1.9'
+
+version = __version__
 
 import sys
 from os.path import dirname, abspath
 
 bkpath   = sys.path[:]
 base_dir = dirname(abspath(__file__))
-sys.path.append(base_dir)
+sys.path.append(dirname(base_dir))
 
-from wallet  import Wallet, WalletGanache, BadPassword
-from network import Network, network_conf
-from tokens  import Tokens
+from easy_chain.wallet  import Wallet, WalletGanache, BadPassword
+from easy_chain.network import Network, network_conf
+from easy_chain.tokens  import Tokens
 
 sys.path = bkpath
 

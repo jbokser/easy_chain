@@ -5,14 +5,10 @@ from os.path  import isfile, join, dirname, abspath
 
 bkpath   = sys.path[:]
 base_dir = dirname(abspath(__file__))
-sys.path.append(base_dir)
+sys.path.append(dirname(dirname(base_dir)))
 
-from contract_base import *
-
-sys.path = bkpath
-sys.path.append(dirname(base_dir))
-
-from conf import get as config
+from easy_chain.contracts.contract_base import *
+from easy_chain.conf                    import get as config
 
 sys.path = bkpath
 
@@ -39,15 +35,12 @@ def get_modules():
     files         = [f for f in files if f not in exclude]
     modules_names = [ n[:-3] for n in files if n[-3:] =='.py' and n[:1]!='_']
 
-    sys.path = bkpath
+    bkpath   = sys.path[:]
+    base_dir = dirname(abspath(__file__))
     sys.path.append(base_dir)
-    sys.path = sorted(list(set(sys.path[:])), key = lambda x: [
-        'easy_chain/contracts' in x, x], reverse=True)
 
     for name in modules_names:
-        sys.path.append(base_dir)
-        obj = __import__(name, globals(), locals())
-        sys.path = bkpath
+        obj = __import__(name)
         for n in dir(obj):
             if n[:1]!='_':
                 sub_obj = getattr(obj, n)
@@ -148,7 +141,15 @@ class ContractsFromJsonFiles(ContractsBase):
 
 if __name__ == '__main__':
     print("File: {}, Ok!".format(repr(__file__)))
-    from network import Network, network_conf
+
+    bkpath   = sys.path[:]
+    base_dir = dirname(abspath(__file__))
+    sys.path.append(dirname(dirname(base_dir)))
+
+    from easy_chain.network import Network, network_conf
+
+    sys.path = bkpath
+
     table = []
     for profile in network_conf.network_profiles.keys():
         network = Network(profile)
