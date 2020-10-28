@@ -11,10 +11,10 @@ from os                   import environ
 
 bkpath   = path[:]
 base_dir = dirname(abspath(__file__))
-path.append(base_dir)
+path.append(dirname(base_dir))
 
-from simple_decoder import encode, decode
-from dict_tools     import PersistentDict, reverse_dcit
+from easy_chain.simple_decoder import encode, decode
+from easy_chain.dict_tools     import PersistentDict, reverse_dcit
 
 path = bkpath
 

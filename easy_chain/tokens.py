@@ -6,10 +6,10 @@ from os.path  import dirname, abspath
 
 bkpath   = sys.path[:]
 base_dir = dirname(abspath(__file__))
-sys.path.append(base_dir)
+sys.path.append(dirname(base_dir))
 
-from conf      import get as config
-from contracts import ERC20
+from easy_chain.conf      import get as config
+from easy_chain.contracts import ERC20
 
 sys.path = bkpath
 

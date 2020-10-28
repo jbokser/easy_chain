@@ -6,10 +6,10 @@ from os.path         import dirname, abspath
 
 bkpath   = sys.path[:]
 base_dir = dirname(abspath(__file__))
-sys.path.append(base_dir)
+sys.path.append(dirname(base_dir))
 
-from conf           import get as config
-from simple_decoder import hash_
+from easy_chain.conf           import get as config
+from easy_chain.simple_decoder import hash_
 
 sys.path = bkpath
 
