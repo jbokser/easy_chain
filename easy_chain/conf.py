@@ -19,7 +19,8 @@ def get(out = {},
         env_pre      = 'ENV',
         dir_         = '/conf/',
         app_name     = 'easy_chain',
-        copy_to_home = True):
+        copy_to_home = True,
+        places       = None):
 
     config_options = None
     file_          = None
@@ -27,10 +28,16 @@ def get(out = {},
     if isinstance(files, str):
         files = [files]
 
+    if isinstance(places, str):
+        places = [places]
+
+    if not places:
+        places = [dirname(abspath(argv[0])),
+                  dirname(abspath(__file__)) + '/data']
+    places = [expanduser("~") + '/.' + app_name] + places
+
     file_list = []
-    for d in [expanduser("~") + '/.' + app_name,
-              dirname(abspath(argv[0])),
-              dirname(abspath(__file__)) + '/data']:
+    for d in places:
               for f in files:
                   full_path_file = d + dir_ +  f
                   if not full_path_file in file_list:
