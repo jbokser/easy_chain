@@ -13,19 +13,31 @@ app_name = basename(__file__)
 
 
 def get(out = {},
-        call_back = lambda x: {},
-        files     = ['main.json', 'main_default.json'],
-        name      = '',
-        env_pre   = 'ENV',
-        dir_      ='/conf/'):
+        call_back    = lambda x: {},
+        files        = ['main.json', 'main_default.json'],
+        name         = '',
+        env_pre      = 'ENV',
+        dir_         = '/conf/',
+        app_name     = 'easy_chain',
+        copy_to_home = True,
+        places       = None):
 
     config_options = None
     file_          = None
 
+    if isinstance(files, str):
+        files = [files]
+
+    if isinstance(places, str):
+        places = [places]
+
+    if not places:
+        places = [dirname(abspath(argv[0])),
+                  dirname(abspath(__file__)) + '/data']
+    places = [expanduser("~") + '/.' + app_name] + places
+
     file_list = []
-    for d in [expanduser("~") + '/.easy_chain',
-              dirname(abspath(argv[0])),
-              dirname(abspath(__file__)) + '/data']:
+    for d in places:
               for f in files:
                   full_path_file = d + dir_ +  f
                   if not full_path_file in file_list:
@@ -46,7 +58,7 @@ def get(out = {},
         except Exception as e:
             config_options = {}
     
-    if config_options and file_ != first_file:
+    if copy_to_home and config_options and file_ != first_file:
 
         if not exists(dirname(first_file)):
             try:
