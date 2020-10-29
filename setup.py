@@ -31,5 +31,5 @@ setup(
     python_requires='>=3.6',
     install_requires=requirements,
     scripts=['easy_chain_cli',
-             'utils/ganache_tools.sh']
+             'utils/ganache_tools']
 )
