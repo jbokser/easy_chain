@@ -252,6 +252,11 @@ class NetworkBase():
         
     @staticmethod
     def Address(value):
+
+        if isinstance(value, int):
+            value = str(value)[-40:]
+            value = "0x" + "0" * (40-len(value)) + value
+
         return str(Web3.toChecksumAddress(str(value)))
 
 
