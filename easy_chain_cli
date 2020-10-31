@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from easy_chain.cli         import cli_group, cli, grey, white, Response
+from easy_chain.cli         import command, command_group, grey, white, Response
 from easy_chain.cli_wallet  import WalletCLI
 from easy_chain.cli_network import NetworkCLI
 from easy_chain             import Wallet, Network, network_conf, Tokens
@@ -11,7 +11,7 @@ wallet  = Wallet(network.uuid)
 tokens  = Tokens(network)
 
 
-@cli_group()
+@command_group()
 def cli():
     """
     Simple Easy Chain CLI
@@ -19,24 +19,24 @@ def cli():
     Develped by Juan S. Bokser (2020)
     """
 
-@cli_group(cli, 'wallet')
+@command_group(cli, 'wallet')
 def wallet_cli():
     """ Referred to wallet """
 
 WalletCLI(wallet_cli, network, wallet, tokens)
 
-@cli_group(cli, 'network')
+@command_group(cli, 'network')
 def network_cli():
     """ Referred to network """
 
 NetworkCLI(network_cli, network, network_conf)
 
-@cli.command(name='version')
+@command(name='version')
 def show_version():
     """ Show version and exit. """
     print(version)
 
-@cli.command(name='info')
+@command(name='info')
 def info():
     """ Show some info and exit. """
     print('{} {}'.format(grey('Deafult network: '),

@@ -1,19 +1,31 @@
 import threading, click, functools, sys
-
 from tabulate import tabulate
 from time     import sleep
-
-
-
-cli = click
+from click    import option, prompt, echo, argument, Choice, BadParameter, ClickException
 
 
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
+OK_COLOR         = hasattr(sys.stderr, "isatty") and sys.stderr.isatty()
+
+cli          = click
+cliException = ClickException
 
 
 
-OK_COLOR = hasattr(sys.stderr, "isatty") and sys.stderr.isatty()
+def command(command_=None, name=None, **kargs):
+    f = command_.command if command_ else cli.command
+    kargs['context_settings'] = CONTEXT_SETTINGS
+    kargs['name'] = name
+    return f(**kargs)
+
+
+
+def command_group(command_group_=None, name=None, **kargs):
+    f = command_group_.group if command_group_ else cli.group
+    kargs['context_settings'] = CONTEXT_SETTINGS
+    kargs['name'] = name
+    return f(**kargs)
 
 
 
@@ -30,9 +42,18 @@ grey   = color_base('bright_black')
 
 
 
-def show_help(command_line):
-    with cli.Context(command_line) as ctx:
-        cli.echo(command_line.get_help(ctx)) 
+def show_help(command):
+    with cli.Context(command) as ctx:
+        echo(command.get_help(ctx)) 
+
+
+
+def trim(s, len_=30, end=' [...]'):
+    assert len(end)<=len_
+    out = str(s)
+    if len(out)>len_:
+        out = out[:(len_-len(end))] + end
+    return out 
 
 
 
@@ -63,20 +84,12 @@ def validate_connected(network):
         @functools.wraps(fnc)
         def wrapper():
             if not network.is_connected:
-                raise click.ClickException(red(
+                raise cliException(red(
                 'Can not connect to the node\n{}'.format(network.uri)))
             return fnc()
 
         return wrapper
     return validate_is_connect
-
-
-
-def cli_group(fnc=None, name=None):
-    if not fnc:
-        return click.group(
-            context_settings=CONTEXT_SETTINGS)
-    return fnc.group(context_settings=CONTEXT_SETTINGS, name = name)
 
 
 
