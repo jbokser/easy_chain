@@ -31,12 +31,12 @@ def network_cli():
 
 NetworkCLI(network_cli, network, network_conf)
 
-@command(name='version')
+@command(cli, name='version')
 def show_version():
     """ Show version and exit. """
     print(version)
 
-@command(name='info')
+@command(cli, name='info')
 def info():
     """ Show some info and exit. """
     print('{} {}'.format(grey('Deafult network: '),
