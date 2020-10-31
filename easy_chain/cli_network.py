@@ -5,8 +5,8 @@ bkpath   = sys.path[:]
 base_dir = dirname(abspath(__file__))
 sys.path.append(dirname(base_dir))
 
-from easy_chain.cli     import  white, red, grey, Response
-from easy_chain.cli     import tabulate, cli, validate_connected
+from easy_chain.cli     import white, red, grey, Response, BadParameter, command, command_group
+from easy_chain.cli     import tabulate, validate_connected, Choice, argument
 from easy_chain.wallet  import BadPassword
 from easy_chain.network import wei_to_str
 
@@ -17,7 +17,7 @@ sys.path = bkpath
 def NetworkCLI(group, network, network_conf):
 
 
-    @group.command(name='gas')
+    @command(group, 'gas')
     @validate_connected(network)
     def gas_price():
         """ Show the gas price """
@@ -25,7 +25,7 @@ def NetworkCLI(group, network, network_conf):
         print(white('minimum  = {}').format(wei_to_str(network.minimum_gas_price)))
 
 
-    @group.command(name='block')
+    @command(group, 'block')
     @validate_connected(network)
     def block_number():
         """ Last block """
@@ -35,7 +35,7 @@ def NetworkCLI(group, network, network_conf):
 
 
     if network_conf.envs:
-        @group.command(name='envs')
+        @command(group, 'envs')
         def show_envs():
             """ Show environment variables to use """
             print()
@@ -45,20 +45,20 @@ def NetworkCLI(group, network, network_conf):
             print()
 
 
-    @group.command(name='default')
-    @cli.argument('network', type=cli.Choice(network_conf.network_profiles.keys()))
+    @command(group, 'default')
+    @argument('network', type=Choice(network_conf.network_profiles.keys()))
     def network_default(network):
         """ Set the default NETWORK to operate """
 
         if network not in network_conf.network_profiles:
-            raise cli.BadParameter(red('Network not found'))
+            raise BadParameter(red('Network not found'))
 
         network_conf.selected_profile = network
 
         print(white('{} has been marked as default.'.format(repr(network))))
 
 
-    @group.command(name='list')
+    @command(group, 'list')
     def network_list():
         """ List of wallet addresses """
         table = []

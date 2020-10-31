@@ -5,8 +5,8 @@ bkpath   = sys.path[:]
 base_dir = dirname(abspath(__file__))
 sys.path.append(dirname(base_dir))
 
-from easy_chain.cli     import yellow, white, red, grey, show_transaction, Response
-from easy_chain.cli     import cli_group, tabulate, cli, validate_connected, print_title
+from easy_chain.cli     import yellow, white, red, grey, show_transaction, Response, argument, option
+from easy_chain.cli     import command, command_group, tabulate, cli, validate_connected, print_title
 from easy_chain.wallet  import BadPassword
 from easy_chain.network import wei_to_str, units
 
@@ -16,19 +16,19 @@ sys.path = bkpath
 
 def WalletCLI(group, network, wallet, tokens=[]):
 
-    @cli_group(group, 'addr')
+    @command_group(group, 'addr')
     def wallet_addresses():
         """ Referred to addresses """
 
 
     if tokens:
-        @cli_group(group, 'token')
+        @command_group(group, 'token')
         def wallet_token():
             """ Referred to tokens"""
 
 
-    @wallet_addresses.command(name='del')
-    @cli.argument('address')
+    @command(wallet_addresses, 'del')
+    @argument('address')
     def wallet_del(address):
         """ Delete ADDRESS from the Wallet """
 
@@ -38,11 +38,11 @@ def WalletCLI(group, network, wallet, tokens=[]):
         del wallet[address]
 
 
-    @wallet_addresses.command(name='add')
-    @cli.argument('private_key')
-    @cli.argument('name', nargs=-1)
-    @cli.option('-n', '--no-encrypt', 'encrypt', is_flag=True, default=True,
-                help='Do not encrypt the private key')
+    @command(wallet_addresses, 'add')
+    @argument('private_key')
+    @argument('name', nargs=-1)
+    @option('-n', '--no-encrypt', 'encrypt', is_flag=True, default=True,
+            help='Do not encrypt the private key')
     def wallet_add(private_key, name=None, encrypt=True):
         """ Add an address to the Wallet with its PRIVATE_KEY """
         if name:
@@ -58,8 +58,8 @@ def WalletCLI(group, network, wallet, tokens=[]):
         print(white('{} has been added.'.format(address)))
 
 
-    @wallet_addresses.command(name='default')
-    @cli.argument('address')
+    @command(wallet_addresses, 'default')
+    @argument('address')
     def wallet_default(address):
         """ Set the default ADDRESS to operate """
         if address not in wallet:
@@ -71,7 +71,7 @@ def WalletCLI(group, network, wallet, tokens=[]):
         print(white('{} has been marked as default.'.format(address)))
 
 
-    @wallet_addresses.command(name='list')
+    @command(wallet_addresses, 'list')
     def wallet_list():
         """ List of wallet addresses """
 
@@ -109,8 +109,8 @@ def WalletCLI(group, network, wallet, tokens=[]):
         print()
 
 
-    @wallet_addresses.command(name='balance')
-    @cli.argument('address')
+    @command(wallet_addresses, 'balance')
+    @argument('address')
     @validate_connected(network)
     def wallet_balance(address):
         """ Show the balance off an ADDRESS """
@@ -125,10 +125,10 @@ def WalletCLI(group, network, wallet, tokens=[]):
             wei_to_str(network.balance(address))))
 
 
-    @group.command(name='send')
-    @cli.argument('to_address')
-    @cli.argument('value', type=int)
-    @cli.argument('unit', default='wei', type=cli.Choice(units))
+    @command(group, 'send')
+    @argument('to_address')
+    @argument('value', type=int)
+    @argument('unit', default='wei', type=cli.Choice(units))
     @validate_connected(network)
     def wallet_transfer(to_address, value, unit = 'wei'):
         """
@@ -156,10 +156,10 @@ def WalletCLI(group, network, wallet, tokens=[]):
 
 
     if tokens:
-        @wallet_token.command(name='send')
-        @cli.argument('to_address')
-        @cli.argument('value', type=int)
-        @cli.argument('token')
+        @command(wallet_token, 'send')
+        @argument('to_address')
+        @argument('value', type=int)
+        @argument('token')
         @validate_connected(network)
         def wallet_token_transfer(token, to_address, value):
             """
@@ -189,9 +189,9 @@ def WalletCLI(group, network, wallet, tokens=[]):
 
 
     if tokens:
-        @wallet_token.command(name='balance')
-        @cli.argument('address')
-        @cli.argument('token')
+        @command(wallet_token, 'balance')
+        @argument('address')
+        @argument('token')
         @validate_connected(network)
         def wallet_token_balance(address, token):
             """ Show the TOKEN balance off an ADDRESS """
@@ -212,7 +212,7 @@ def WalletCLI(group, network, wallet, tokens=[]):
 
 
     if tokens:
-        @wallet_token.command(name='list')
+        @command(wallet_token, 'list')
         def wallet_token_list():
             """ List of wallet tokens"""
 
