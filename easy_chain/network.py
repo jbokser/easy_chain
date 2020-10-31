@@ -150,6 +150,7 @@ class NetworkBase():
             self.web3.middleware_onion.inject(
                 geth_poa_middleware, layer=0)
         self._is_connected = self.web3.isConnected()
+        self._nonce = {}
 
 
     @property
@@ -234,6 +235,17 @@ class NetworkBase():
         return self.web3.eth.getTransactionCount(address, nonce_method)
 
 
+    def get_new_nonce(self, address, nonce_method = "pending"):
+        if not address in self._nonce:
+            self._nonce[address] = 0
+        new_nonce = self.transaction_count(address, nonce_method)
+        if new_nonce > self._nonce[address]:
+            self._nonce[address] = new_nonce
+        else:
+            self._nonce[address] += 1
+        return self._nonce[address]
+
+
     def send_transaction(self, transaction):
         """ Send raw transaction """
         return self.web3.eth.sendRawTransaction(transaction).hex()
@@ -304,7 +316,7 @@ class NetworkBase():
 
         value = self.web3.toWei(value, unit)
 
-        nonce = self.transaction_count(from_address)
+        nonce = self.get_new_nonce(from_address)
 
         transaction = dict(chainId  = self.chain_id,
                            nonce    = nonce,
@@ -348,7 +360,7 @@ class NetworkBase():
 
         from_address = self.Address(from_address)
 
-        nonce = self.transaction_count(from_address, nonce_method = nonce_method)
+        nonce = self.get_new_nonce(from_address, nonce_method = nonce_method)
 
         transaction_dict = dict(chainId = self.chain_id,
                                 nonce    = nonce,
