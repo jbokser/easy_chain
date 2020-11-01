@@ -8,7 +8,7 @@ sys.path.append(dirname(base_dir))
 from easy_chain.cli     import white, red, grey, Response, BadParameter, command, command_group
 from easy_chain.cli     import tabulate, validate_connected, Choice, argument
 from easy_chain.wallet  import BadPassword
-from easy_chain.network import wei_to_str
+from easy_chain.network import wei_to_str, network_conf
 
 sys.path = bkpath
 
@@ -85,6 +85,12 @@ def NetworkCLI(group, network, network_conf):
         print()
         print(grey('(config file: {})'.format(network_conf.config_file)))
         print()
+
+
+    @command(group, 'filename')
+    def network_filename():
+        """ Show network config file name """
+        print(network_conf.config_file)
 
 
 

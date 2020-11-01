@@ -208,6 +208,14 @@ class WalletBase(dict):
 
 
     @property
+    def filename(self):
+        try:
+            return self._storage.filename
+        except:
+            return None
+
+
+    @property
     def default(self):
         return self._default
 

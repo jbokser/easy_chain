@@ -251,6 +251,13 @@ def WalletCLI(group, network, wallet, tokens=[]):
             print()
 
 
+    if wallet.filename:
+        @command(group, 'filename')
+        def wallet_filename():
+            """ Show wallet config file name """
+            print(wallet.filename)
+
+
 
 if __name__ == '__main__':
     print("File: {}, Ok!".format(repr(__file__)))
