@@ -73,7 +73,7 @@ class ERC20(Contract):
                sign_callback,
                from_address,
                gas_limit = 0,
-               gas_price = 0):
+               gas_price = 'auto'):
 
         name   = self.name
         symbol = self.symbol
@@ -107,7 +107,7 @@ class ERC20(Contract):
                  to_address,
                  value,
                  gas_limit = 0,
-                 gas_price = 0):
+                 gas_price = 'auto'):
 
         from_address = self._network.Address(from_address)
         to_address   = self._network.Address(to_address)
@@ -130,7 +130,7 @@ class ERC20(Contract):
              to_address,
              value,
              gas_limit = 0,
-             gas_price = 0):
+             gas_price = 'auto'):
 
         from_address = self._network.Address(from_address)
         to_address   = self._network.Address(to_address)
@@ -152,7 +152,7 @@ class ERC20(Contract):
              to_address,
              value,
              gas_limit = 0,
-             gas_price = 0):
+             gas_price = 'auto'):
 
         from_address = self._network.Address(from_address)
         to_address   = self._network.Address(to_address)

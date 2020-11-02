@@ -239,7 +239,7 @@ class ContractBase(object):
                  fnc_name,
                  *args,
                  gas_limit = 0,
-                 gas_price = 0):
+                 gas_price = 'auto'):
 
         from_address      = self._network.Address(from_address)
         contract_function = self._function(fnc_name, *args)
@@ -257,7 +257,7 @@ class ContractBase(object):
                from_address,
                *args,
                gas_limit = 0,
-               gas_price = 0):
+               gas_price = 'auto'):
 
         from_address      = self._network.Address(from_address)
         contract_function = self._contract.constructor(*args)
