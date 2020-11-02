@@ -302,6 +302,27 @@ class NetworkBase():
             return None
 
 
+    def get_gas_price(self, formula='gas_price'):
+        """
+        Obtains the price of gas based on a formula
+
+        Examples:
+
+        >>> network.get_gas_price('gas_price')
+        65000002
+
+        >>> network.get_gas_price('gas_price + 100')
+        65000102
+
+        >>> network.get_gas_price('gas_price * 1.1')
+        71500002
+
+        >>> network.get_gas_price('minimum')
+        59240000
+        """
+        return self._get_gas_price(default=formula)
+
+
     def _get_gas_price(self, default=None):
 
         if default and isinstance(default, int):
