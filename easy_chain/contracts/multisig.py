@@ -36,7 +36,7 @@ class MultiSigWallet(Contract):
                accounts,
                required_confirmations,
                gas_limit = 0,
-               gas_price = 0):
+               gas_price = 'auto'):
 
 
         Address = self._network.Address
@@ -84,7 +84,7 @@ class MultiSigWallet(Contract):
              value     = 0,
              unit      = 'wei',
              gas_limit = 0,
-             gas_price = 0):
+             gas_price = 'auto'):
 
         from_address = self._network.Address(from_address)
         to_address   = self._network.Address(to_address)
@@ -105,7 +105,7 @@ class MultiSigWallet(Contract):
              from_address,
              id_,
              gas_limit = 0,
-             gas_price = 0):
+             gas_price = 'auto'):
 
         from_address = self._network.Address(from_address)
         id_ = int(id_)

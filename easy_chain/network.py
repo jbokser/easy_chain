@@ -302,25 +302,78 @@ class NetworkBase():
             return None
 
 
+    def _get_gas_price(self, default=None):
+
+        if default and isinstance(default, int):
+            return default
+
+        if not default:
+            default = 'auto'
+
+        if not isinstance(default, str):
+            raise TypeError('gas_price')
+
+        minimum_gas_price = self.minimum_gas_price
+        gas_price         = self.gas_price
+        
+        kargs = dict(
+            minimum_gas_price = minimum_gas_price,
+            minimum_gas       = minimum_gas_price,
+            minimum           = minimum_gas_price,
+            min               = minimum_gas_price,
+            minimum_price     = minimum_gas_price,
+            min_price         = minimum_gas_price,
+            gas_price         = gas_price,
+            gas               = gas_price,
+            price             = gas_price,
+            MinimumGasPrice   = minimum_gas_price,
+            MinimumGas        = minimum_gas_price,
+            Minimum           = minimum_gas_price,
+            Min               = minimum_gas_price,
+            MinimumPrice      = minimum_gas_price,
+            MinPrice          = minimum_gas_price,
+            auto              = gas_price,
+            Auto              = gas_price,
+            GasPrice          = gas_price,
+            Gas               = gas_price,
+            Price             = gas_price,
+            minimumGasPrice   = minimum_gas_price,
+            minimumGas        = minimum_gas_price,
+            minimumPrice      = minimum_gas_price,
+            minPrice          = minimum_gas_price,
+            gasPrice          = gas_price)
+        
+        try:
+            value = int(eval(default, kargs))
+        except Exception as e:
+            raise ValueError('gas_price: {}'.format(e))
+
+        return value
+
+
     def transfer(self,
                  sign_callback,
                  from_address,
                  to_address,
                  value,
                  unit='wei',
-                 gas_limit = 100000):
+                 gas_limit    = 100000,
+                 gas_price    = 'auto',
+                 nonce_method = "pending"):
         """ Transfer """
 
         from_address = self.Address(from_address)
         to_address   = self.Address(to_address)
 
+        gas_price = self._get_gas_price(gas_price)
+
         value = self.web3.toWei(value, unit)
 
-        nonce = self.get_new_nonce(from_address)
+        nonce = nonce = self.get_new_nonce(from_address, nonce_method = nonce_method)
 
         transaction = dict(chainId  = self.chain_id,
                            nonce    = nonce,
-                           gasPrice = self.gas_price,
+                           gasPrice = gas_price,
                            gas      = gas_limit,
                            to       = to_address,
                            value    = value)
@@ -337,7 +390,7 @@ class NetworkBase():
                     value        = 0,
                     unit         = 'wei',
                     gas_limit    = 0,
-                    gas_price    = 0,
+                    gas_price    = 'minimum',
                     nonce_method = "pending"):
 
         value = self.web3.toWei(value, unit)
@@ -355,8 +408,7 @@ class NetworkBase():
         if gas_estimate and gas_estimate > gas_limit:
             raise Exception("Gas estimated is bigger than gas limit")
 
-        if not gas_price:
-            gas_price = self.minimum_gas_price
+        gas_price = self._get_gas_price(gas_price)
 
         from_address = self.Address(from_address)
 
