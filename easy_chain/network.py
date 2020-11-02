@@ -390,7 +390,7 @@ class NetworkBase():
 
         value = self.web3.toWei(value, unit)
 
-        nonce = nonce = self.get_new_nonce(from_address, nonce_method = nonce_method)
+        nonce = self.get_new_nonce(from_address, nonce_method = nonce_method)
 
         transaction = dict(chainId  = self.chain_id,
                            nonce    = nonce,
