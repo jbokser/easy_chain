@@ -68,6 +68,7 @@ def get(out = {},
                     raise
 
         copyfile(file_, first_file)
+        file_ = first_file
 
     config_options_json = json.dumps(config_options, indent=4, sort_keys=True)
 
