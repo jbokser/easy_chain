@@ -1,11 +1,16 @@
 from setuptools import setup, find_packages
-from easy_chain import version
+from os.path    import dirname, abspath
 
-with open("README.md", "r") as file_:
+base_dir = dirname(abspath(__file__))
+
+with open(base_dir + "/README.md", "r") as file_:
     long_description = file_.read()
 
-with open("requirements.txt", "r") as file_:
+with open(base_dir + "/requirements.txt", "r") as file_:
     requirements = file_.read().split()
+
+with open(base_dir + "/easy_chain/version.txt", "r") as file_:
+    version = file_.read().split()[0]
 
 setup(
     name='easy_chain',
@@ -23,7 +28,8 @@ setup(
         'Programming Language :: Python :: 3.6'
     ],
     package_data={
-        "easy_chain": ["data/contracts/*.json",
+        "easy_chain": ["version.txt",
+                       "data/contracts/*.json",
                        "data/contracts/*.abi",
                        "data/contracts/*.bin",
                        "data/conf/*.json"]
