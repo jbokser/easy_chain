@@ -55,7 +55,12 @@ get_modules()
 del get_modules
 
 
+
 class ContractsBase(list):
+
+
+    def __init__(self, network):
+        self._network = network
 
 
     def __call__(self, search):
@@ -67,6 +72,24 @@ class ContractsBase(list):
                                        contract.name.lower()]:
                 return contract
         return None
+    
+
+    def add(self, address, **kargs):
+        network = self._network
+        Constructor = Contract
+        if 'class' in kargs:
+            if isinstance(kargs['class'], str):
+                if kargs['class'] in globals():
+                    Constructor = globals()[kargs['class']]
+            else:
+                Constructor = kargs['class']
+        constructor_kargs = dict(kargs)
+        if 'class' in constructor_kargs:
+            del constructor_kargs['class']
+        constructor_kargs['network'] = network
+        constructor_kargs['address'] = address
+        contract = Constructor(**constructor_kargs)
+        self.append(contract)
 
 
 
@@ -80,17 +103,7 @@ class Contracts(ContractsBase):
         for address, value in contracts_dict.items():
             address = network.Address(address)
             if isinstance(value, dict):
-                if not 'class' in value:
-                    value['class'] = "Contract"
-                if not value['class'] in globals():
-                    value['class'] = "Contract"
-                constructor = globals()[value['class']]
-                kargs = dict(value)
-                del kargs['class']
-                kargs['network'] = network
-                kargs['address'] = address
-                c = constructor(**kargs)
-                self.append(c)
+                self.add(address, **value)
 
 
 
