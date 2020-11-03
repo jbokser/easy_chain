@@ -22,7 +22,7 @@ ganache_stop () {
 }
 
 ganache_start () {
-    stop_ganache
+    ganache_stop
     ganache-cli -d -i 12341234 -a 20 -e 10000 -t `date -Iseconds` &
 }
 
