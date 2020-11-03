@@ -80,7 +80,9 @@ def WalletCLI(group, network, wallet, tokens=[]):
         if wallet:
 
             summary = wallet.summary
-            summary.sort(key = lambda x:[x['name'], x['default'], x['address']])
+            summary.sort(key = lambda x:[x['name'] if x['name'] else '',
+                                         x['default'],
+                                         x['address']])
 
             for d in summary:
                 for k in d.keys():
