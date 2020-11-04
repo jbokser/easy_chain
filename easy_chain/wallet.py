@@ -59,12 +59,26 @@ class WalletBase(dict):
                                  'addresses': {},
                                  'names':     {}}
 
-        self._default = storage['wallet']['default']
+        if storage['wallet']['default']: 
+            self._default = Address(storage['wallet']['default'])
+        else:
+            self._default = None
 
         for key, value in dict(storage['wallet']['addresses']).items():
-            dict.__setitem__(self, key, value)
+            try:
+                key = Address(key)
+            except:
+                key = None
+            if key:
+                dict.__setitem__(self, key, value)
+
         for key, value in dict(storage['wallet']['names']).items():
-            self._names[key] = value
+            try:
+                key = Address(key)
+            except:
+                key = None
+            if key:
+                self._names[key] = value
 
 
     def clean_up(self):

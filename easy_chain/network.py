@@ -142,6 +142,12 @@ def wei_to_str(value):
 class NetworkBase():
 
 
+    InvalidAddress        = InvalidAddress
+    ValidationError       = ValidationError
+    BadFunctionCallOutput = BadFunctionCallOutput
+    TransactionNotFound   = TransactionNotFound
+
+
     def __init__(self, uri, chain_id, profile, poa=False):
         self.profile = profile
         self._uri = uri
