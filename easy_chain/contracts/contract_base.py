@@ -1,5 +1,6 @@
 import json
-from os.path  import dirname, abspath
+from os.path import dirname, abspath
+from web3    import Web3 
 
 
 work_dir = dirname(dirname(abspath(__file__)))
@@ -9,7 +10,13 @@ work_dir = dirname(dirname(abspath(__file__)))
 class ContractBase(object):
 
 
-    def __init__(self, network, abi, address= None, name = None, bytecode= None):
+    def __init__(self, network, abi,
+        address  = None,
+        name     = None,
+        bytecode = None,
+        warning  = lambda x: None):
+
+        self.warning = warning
 
         if address:
             address = network.Address(address)
@@ -27,10 +34,24 @@ class ContractBase(object):
 
 
     def _load(self):
-        self._contract = self._network.web3.eth.contract(
-            address  = self._address,
-            abi      = self._abi,
-            bytecode = self._bytecode)
+        try:
+            self._contract = self._network.web3.eth.contract(
+                address  = self._address,
+                abi      = self._abi,
+                bytecode = self._bytecode)
+        except self._network.InvalidAddress as e:
+            try:
+                message, addr = e.args
+                self.warning(f'{addr} {message}')
+            except:
+                self.warning(str(e))
+
+            self._contract = self._network.web3.eth.contract(
+                address  = Web3.toChecksumAddress(self._address.lower()),
+                abi      = self._abi,
+                bytecode = self._bytecode)
+
+
 
 
     def __bool__(self):
@@ -327,7 +348,8 @@ class Contract(ContractBase):
                  abi_path      = None,
                  abi_file      = None,
                  bytecode_path = None,
-                 bytecode_file = None):
+                 bytecode_file = None,
+                 warning       = lambda x: None):
 
         if not name and json_path and json_file:
             json_full_path = json_path + '/' + json_file
@@ -409,7 +431,8 @@ class Contract(ContractBase):
             abi      = abi,
             address  = address,
             name     = name,
-            bytecode = bytecode)
+            bytecode = bytecode,
+            warning  = warning)
 
 
 
@@ -430,6 +453,6 @@ if __name__ == '__main__':
         "abi_path": "{work_dir}/data/contracts",
         "abi_file": "erc20.json"}
 
-    contract = Contract(**kargs)
+    contract = Contract(warning = lambda x: print(f'WARNING: {x}'), **kargs)
     contract.dict_constructor()
     

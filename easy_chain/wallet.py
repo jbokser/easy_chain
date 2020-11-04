@@ -15,6 +15,8 @@ path.append(dirname(base_dir))
 
 from easy_chain.simple_decoder import encode, decode
 from easy_chain.dict_tools     import PersistentDict, reverse_dcit
+from easy_chain.address        import AddressWithChecksum as Address
+from easy_chain.address        import AddressWithChecksumFromPrivateKey as AddressFromPrivateKey
 
 path = bkpath
 
@@ -34,14 +36,6 @@ def prompt_private_key_pass(key, confirmation=False):
         type = str,
         hide_input = True,
         confirmation_prompt = confirmation)
-
-
-
-Address = lambda value: str(Web3.toChecksumAddress(str(value)))
-
-
-
-AddressFromPrivateKey = lambda value: str(Account.privateKeyToAccount(value).address)
 
 
 
@@ -66,12 +60,26 @@ class WalletBase(dict):
                                  'addresses': {},
                                  'names':     {}}
 
-        self._default = storage['wallet']['default']
+        if storage['wallet']['default']: 
+            self._default = Address(storage['wallet']['default'])
+        else:
+            self._default = None
 
         for key, value in dict(storage['wallet']['addresses']).items():
-            dict.__setitem__(self, key, value)
+            try:
+                key = Address(key)
+            except:
+                key = None
+            if key:
+                dict.__setitem__(self, key, value)
+
         for key, value in dict(storage['wallet']['names']).items():
-            self._names[key] = value
+            try:
+                key = Address(key)
+            except:
+                key = None
+            if key:
+                self._names[key] = value
 
 
     def clean_up(self):
@@ -313,7 +321,7 @@ class WalletBase(dict):
 
         if type(data) in [dict]:
             try:
-                valid_address = w3.eth.account.recover_transaction(sign)
+                valid_address = Address(w3.eth.account.recover_transaction(sign))
                 return valid_address == address
             except:
                 return False
@@ -321,8 +329,8 @@ class WalletBase(dict):
         if not data:
             return False
 
-        message        = encode_defunct(text=str(data))
-        valid_address = w3.eth.account.recover_message(message, signature=sign)
+        message       = encode_defunct(text=str(data))
+        valid_address = Address(w3.eth.account.recover_message(message, signature=sign))
 
         try:
             return valid_address == address
@@ -450,13 +458,13 @@ if __name__ == '__main__':
 
     for data, signed in [
             ("Hello world!", "0x41229c026586cfb2125f6cf1272a4e240ebb9ce3c3e8a50dfdcaaf5d57b5ca4565a751fc825ad6505a71d513e0c48ee1e8500e4fe192b2394936853fd25549861b"),
-            ({'to':       '0xF0109fC8DF283027b6285cc889F5aA624EaC1F55',
-              'value':    1000000000,
-              'gas':      2000000,
-              'gasPrice': 234567897654321,
-              'nonce':    0,
+            ({'to':       '0x0000000000000000000000000000000000000001',
+              'value':    123,
+              'gas':      132,
+              'gasPrice': 123,
+              'nonce':    123,
               'chainId':  1},
-             "0xf86a8086d55698372431831e848094f0109fc8df283027b6285cc889f5aa624eac1f55843b9aca008026a0e7c96c14f9adc4d42b18767f25b2f204fcd1ac467d593475630f07fcc0be9739a07dc995ebe234899b140ca870f81d0a1af2d883381c38adc2ee2780dfa32334c1")
+             "0xf85d7b7b81849400000000000000000000000000000000000000017b8025a091a4320e6ca6c34cb4645ab835fc164c3a3e28f657f2aa6bb3be1acd1a3008039f2fbd4fd1ebdcf2cda2b28a3f88e119e756535e0c1a421c2674482f2f30e89a")
         ]:
 
         for fnc, args, ok_out in [
