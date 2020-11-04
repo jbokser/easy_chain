@@ -234,7 +234,7 @@ class NetworkBase():
 
     def balance(self, address):
         """ Get the balance of an address """
-        return self.web3.eth.getBalance(address)
+        return self.web3.eth.getBalance(self.Address(address))
 
 
     def transaction_count(self, address, nonce_method = "pending"):
