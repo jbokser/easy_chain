@@ -15,6 +15,16 @@ sys.path = bkpath
 
 
 
+def Address(value):
+
+    if isinstance(value, int):
+        value = str(value)[-40:]
+        value = "0x" + "0" * (40-len(value)) + value
+
+    return str(Web3.toChecksumAddress(str(value))).lower()
+
+
+
 class NetworkConf():
 
     def __init__(self):
@@ -261,15 +271,20 @@ class NetworkBase():
         block_timestamp = self.web3.eth.getBlock(block).timestamp
         return datetime.datetime.fromtimestamp(block_timestamp)
         
-        
-    @staticmethod
-    def Address(value):
 
-        if isinstance(value, int):
-            value = str(value)[-40:]
-            value = "0x" + "0" * (40-len(value)) + value
+    def get_address_checksum_encode(self, addr):
+        adopted_eip1191 = [30, 31]
+        hash_input = str(self.chain_id) + addr.lower() if self.chain_id in adopted_eip1191 else addr[2:].lower()
+        hash_output = Web3.keccak(hash_input.encode('utf8')).hex()
+        aggregate = list(zip(addr[2:].lower(),hash_output[2:]))
+        out = addr[:2] + ''.join([c.upper() if int(a,16) >= 8 else c for c,a in aggregate])
+        return out
 
-        return str(Web3.toChecksumAddress(str(value)))
+
+    def Address(self, value):
+        out = Address(value)
+        out = self.get_address_checksum_encode(out)
+        return out
 
 
     def balance_block_number(self, address, block_number=0):
