@@ -15,7 +15,8 @@ path.append(dirname(base_dir))
 
 from easy_chain.simple_decoder import encode, decode
 from easy_chain.dict_tools     import PersistentDict, reverse_dcit
-from easy_chain.address        import Address, AddressFromPrivateKey
+from easy_chain.address        import AddressWithChecksum as Address
+from easy_chain.address        import AddressWithChecksumFromPrivateKey as AddressFromPrivateKey
 
 path = bkpath
 

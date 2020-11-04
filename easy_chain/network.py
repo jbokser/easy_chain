@@ -10,7 +10,7 @@ sys.path.append(dirname(base_dir))
 
 from easy_chain.conf           import get as config
 from easy_chain.simple_decoder import hash_
-from easy_chain.address        import Address, AddressWithChecksum
+from easy_chain.address        import AddressWithChecksum
 
 sys.path = bkpath
 
@@ -70,7 +70,7 @@ class NetworkConf():
             self._profiles_envs[profile] = {}
             for env, value in envs.items():
                 
-                valid = ['_CHAIN_ID', '_POA', '_URI']
+                valid = ['_CHAIN_ID', '_POA', '_URI', '_CHECKSUM']
                 pre = 'EASY_CHAIN_NETWORK_PROFILES_'
                 valid = [ pre + profile.upper() + n for n in valid ]
 
@@ -148,9 +148,10 @@ class NetworkBase():
     TransactionNotFound   = TransactionNotFound
 
 
-    def __init__(self, uri, chain_id, profile, poa=False):
+    def __init__(self, uri, chain_id, profile, poa=False, checksum=False):
         self.profile = profile
         self._uri = uri
+        self._checksum = checksum
         self._cahin_id = chain_id
         self.web3 = Web3(HTTPProvider(uri))
         if poa:
@@ -239,7 +240,7 @@ class NetworkBase():
 
     def transaction_count(self, address, nonce_method = "pending"):
         """ Get the transaction count of an address """
-        return self.web3.eth.getTransactionCount(address, nonce_method)
+        return self.web3.eth.getTransactionCount(self.Address(address), nonce_method)
 
 
     def get_new_nonce(self, address, nonce_method = "pending"):
@@ -270,7 +271,10 @@ class NetworkBase():
         
 
     def Address(self, value):
-        return AddressWithChecksum(value, self.chain_id)
+        if self._checksum:
+            return AddressWithChecksum(value, self.chain_id)
+        else:
+            return AddressWithChecksum(value)
 
 
     def balance_block_number(self, address, block_number=0):
@@ -452,7 +456,7 @@ class NetworkBase():
 
 class Network(NetworkBase):
 
-    def __init__(self, profile=None, uri=None, chain_id=None, poa=False):
+    def __init__(self, profile=None, uri=None, chain_id=None, poa=False, checksum=False):
 
         if not profile:
             profile = network_conf.selected_profile
@@ -470,6 +474,9 @@ class Network(NetworkBase):
 
         if poa:
             kargs['poa'] = poa
+
+        if checksum:
+            kargs['poa'] = checksum
 
         kargs['profile'] = profile       
         NetworkBase.__init__(self, **kargs)
