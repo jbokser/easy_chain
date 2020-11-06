@@ -113,7 +113,7 @@ def WalletCLI(group, network, wallet, tokens=[]):
 
     @command(wallet_addresses, 'balance')
     @argument('address')
-    @validate_connected(network)
+    @validate_connected(network=network)
     def wallet_balance(address):
         """ Show the balance off an ADDRESS """
 
@@ -131,7 +131,7 @@ def WalletCLI(group, network, wallet, tokens=[]):
     @argument('to_address')
     @argument('value', type=int)
     @argument('unit', default='wei', type=cli.Choice(units))
-    @validate_connected(network)
+    @validate_connected(network=network)
     def wallet_transfer(to_address, value, unit = 'wei'):
         """
         Transfers VALUE [UNIT] from the default account to TO_ADDRESS
@@ -162,7 +162,7 @@ def WalletCLI(group, network, wallet, tokens=[]):
         @argument('to_address')
         @argument('value', type=int)
         @argument('token')
-        @validate_connected(network)
+        @validate_connected(network=network)
         def wallet_token_transfer(token, to_address, value):
             """
             Transfers TOKEN VALUE from the default account to TO_ADDRESS
@@ -194,7 +194,7 @@ def WalletCLI(group, network, wallet, tokens=[]):
         @command(wallet_token, 'balance')
         @argument('address')
         @argument('token')
-        @validate_connected(network)
+        @validate_connected(network=network)
         def wallet_token_balance(address, token):
             """ Show the TOKEN balance off an ADDRESS """
 

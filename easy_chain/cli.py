@@ -1,7 +1,8 @@
-import threading, click, functools, sys
-from tabulate import tabulate
-from time     import sleep
-from click    import option, prompt, echo, argument, Choice, BadParameter, ClickException
+import threading, click, sys
+from tabulate  import tabulate
+from time      import sleep
+from click     import option, prompt, echo, argument, Choice, BadParameter, ClickException
+from decorator import decorator
 
 
 
@@ -77,19 +78,13 @@ def wei_to_str(value):
 
 
 
-def validate_connected(network):
-    def validate_is_connect(fnc):
-        """ Decorator to validate is connected """
-
-        @functools.wraps(fnc)
-        def wrapper():
-            if not network.is_connected:
-                raise cliException(red(
-                'Can not connect to the node\n{}'.format(network.uri)))
-            return fnc()
-
-        return wrapper
-    return validate_is_connect
+@decorator
+def validate_connected(func, network=None, *args, **kw):
+    """ Decorator to validate is connected """
+    if network!=None and not network.is_connected:
+        raise cliException(red(
+            'Can not connect to the node\n{}'.format(network.uri)))    
+    return func(*args, **kw)
 
 
 

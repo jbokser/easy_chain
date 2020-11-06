@@ -18,7 +18,7 @@ def NetworkCLI(group, network, network_conf):
 
 
     @command(group, 'gas')
-    @validate_connected(network)
+    @validate_connected(network=network)
     def gas_price():
         """ Show the gas price """
         print(white('gasPrice = {}').format(wei_to_str(network.gas_price)))
@@ -26,7 +26,7 @@ def NetworkCLI(group, network, network_conf):
 
 
     @command(group, 'block')
-    @validate_connected(network)
+    @validate_connected(network=network)
     def block_number():
         """ Last block """
         n = network.block_number
