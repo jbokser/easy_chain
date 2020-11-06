@@ -245,7 +245,7 @@ class NetworkBase():
 
     def get_new_nonce(self, address, nonce_method = "pending"):
         if not address in self._nonce:
-            self._nonce[address] = 0
+            self._nonce[address] = -1
         new_nonce = self.transaction_count(address, nonce_method)
         if new_nonce > self._nonce[address]:
             self._nonce[address] = new_nonce
