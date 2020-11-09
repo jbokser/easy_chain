@@ -14,7 +14,7 @@ base_dir = dirname(abspath(__file__))
 path.append(dirname(base_dir))
 
 from easy_chain.simple_decoder import encode, decode
-from easy_chain.dict_tools     import PersistentDict, reverse_dcit
+from easy_chain.dict_tools     import PersistentDict, reverse_dict
 from easy_chain.address        import AddressWithChecksum as Address
 from easy_chain.address        import AddressWithChecksumFromPrivateKey as AddressFromPrivateKey
 
@@ -275,7 +275,7 @@ class WalletBase(dict):
 
 
     def get_by_name(self, name, default=None):
-        return reverse_dcit(self._names).get(name, default)
+        return reverse_dict(self._names).get(name, default)
 
 
     def get_is_encrypt(self, address):
