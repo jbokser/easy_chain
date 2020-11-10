@@ -57,7 +57,7 @@ def get(out = {},
             exit(1)
         except Exception as e:
             config_options = {}
-    
+
     if copy_to_home and config_options and file_ != first_file:
 
         if not exists(dirname(first_file)):
@@ -107,7 +107,7 @@ def get(out = {},
         out[key] = value
 
     out['config_file'] = file_
-    if env_pre:      
+    if env_pre:
         out['envs']    = env_dict
 
     return out

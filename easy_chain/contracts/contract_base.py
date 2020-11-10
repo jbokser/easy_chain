@@ -236,13 +236,28 @@ class ContractBase(object):
         return fnc(*args)
 
 
-    def function_call(self, fnc_name, *args):
-        return self._function(fnc_name, *args).call()
+    def function_call(self, fnc_name, *args, **kargs):
+        block_identifier = None
+        if kargs:
+            for k in ['block_identifier', 'block_number', 'block']:
+                if k in kargs:
+                    v = kargs[k]
+                    del kargs[k]
+                    if v:
+                        block_identifier = v
+            if 'from' in kargs:
+                kargs['from'] = self._network.Address(kargs['from'])
+            if block_identifier:
+                return self._function(fnc_name, *args).call(kargs, block_identifier=block_identifier)
+            else:
+                return self._function(fnc_name, *args).call(kargs)
+        else:
+            return self._function(fnc_name, *args).call()
 
 
-    def function_call_from_address_1(self, fnc_name, *args):
-        return self._function(fnc_name, *args).call({
-            'from': self._network.Address(1)})
+    def function_call_from_address_1(self, fnc_name, *args, **kargs):
+        kargs['from'] = 1
+        return self.function_call(fnc_name, *args, **kargs)
 
 
     def transaction_data(self,

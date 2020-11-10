@@ -51,7 +51,7 @@ class PersistentDict(dict):
 
 
 
-def reverse_dcit(dict_):
+def reverse_dict(dict_):
     return dict([ (value, key) for key, value in dict_.items()])
 
 
@@ -60,7 +60,7 @@ if __name__ == '__main__':
     print("File: {}, Ok!".format(repr(__file__)))
 
     for fnc, args, ok_out in [  
-            (reverse_dcit, ({'a': 1, 'b': 2}, ), {1: 'a', 2: 'b'}),   
+            (reverse_dict, ({'a': 1, 'b': 2}, ), {1: 'a', 2: 'b'}),
         ]:
 
         out = fnc(*args)

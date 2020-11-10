@@ -145,7 +145,7 @@ class Response():
     @property
     def value(self):
         return self._value
-    
+
     def __bool__(self):
         if self.value and isinstance(self.value, str):
             s_value = self.value.lower().strip()
@@ -168,7 +168,7 @@ class Response():
                 return '{} {}'.format(
                     green('✔') if bool(self) else red('✖'),
                     white(self.value))
-            return white(str(self.value))          
+            return white(str(self.value))
         return str(self.value)
 
 

@@ -63,13 +63,13 @@ class NetworkConf():
 
         envs     = data['envs']
         profiles = data['network_profiles']
-        
+
         self._profiles_envs = {}
 
         for profile in profiles.keys():
             self._profiles_envs[profile] = {}
             for env, value in envs.items():
-                
+
                 valid = ['_CHAIN_ID', '_POA', '_URI', '_CHECKSUM']
                 pre = 'EASY_CHAIN_NETWORK_PROFILES_'
                 valid = [ pre + profile.upper() + n for n in valid ]
@@ -268,7 +268,7 @@ class NetworkBase():
         """ Block timestamp """
         block_timestamp = self.web3.eth.getBlock(block).timestamp
         return datetime.datetime.fromtimestamp(block_timestamp)
-        
+
 
     def Address(self, value):
         if self._checksum:
@@ -341,7 +341,7 @@ class NetworkBase():
 
         minimum_gas_price = self.minimum_gas_price
         gas_price         = self.gas_price
-        
+
         kargs = dict(
             minimum_gas_price = minimum_gas_price,
             minimum_gas       = minimum_gas_price,
@@ -368,7 +368,7 @@ class NetworkBase():
             minimumPrice      = minimum_gas_price,
             minPrice          = minimum_gas_price,
             gasPrice          = gas_price)
-        
+
         try:
             value = int(eval(default, kargs))
         except Exception as e:
@@ -460,7 +460,7 @@ class Network(NetworkBase):
 
         if not profile:
             profile = network_conf.selected_profile
-        
+
         if profile in network_conf.network_profiles:
             kargs = network_conf.network_profiles[profile]
         else:
@@ -478,7 +478,7 @@ class Network(NetworkBase):
         if checksum:
             kargs['poa'] = checksum
 
-        kargs['profile'] = profile       
+        kargs['profile'] = profile
         NetworkBase.__init__(self, **kargs)
 
 
