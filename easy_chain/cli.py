@@ -250,7 +250,7 @@ def show_transaction(network, transaction, frequency=5, times=120):
         print(white('Ok!'))
         print('')
         print('Block Number:    {}'.format(white(response.block)))
-        print('Gas used:        {}'.format(white(wei_to_str(response.gas))))
+        print('Gas used:        {}'.format(white(response.gas)))
         print('Status:          {}'.format(response.status))
         if 'contractAddress' in transaction_receipt:
             if transaction_receipt['contractAddress']:
