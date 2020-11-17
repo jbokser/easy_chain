@@ -213,7 +213,7 @@ class Fail(Response):
 
 
 
-def show_transaction(network, transaction, frequency=5, times=120):
+def show_transaction(network, transaction, frequency=5, times=120, gas_price=0):
     """
     Show data of a transaction
     """
@@ -237,6 +237,7 @@ def show_transaction(network, transaction, frequency=5, times=120):
                 receipt = transaction_receipt,
                 block   = transaction_receipt['blockNumber'],
                 gas     = transaction_receipt['gasUsed'],
+                cost    = transaction_receipt['gasUsed'] * gas_price,
                 status  = {0: Fail(),
                            1: Ok()}.get(
                                transaction_receipt['status'],
@@ -251,6 +252,8 @@ def show_transaction(network, transaction, frequency=5, times=120):
         print('')
         print('Block Number:    {}'.format(white(response.block)))
         print('Gas used:        {}'.format(white(response.gas)))
+        if response.cost:
+            print('Cost:            {}'.format(white(wei_to_str(response.cost))))
         print('Status:          {}'.format(response.status))
         if 'contractAddress' in transaction_receipt:
             if transaction_receipt['contractAddress']:
