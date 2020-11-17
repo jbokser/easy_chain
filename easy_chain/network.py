@@ -264,6 +264,26 @@ class NetworkBase():
         return self.web3.eth.getBlock(*args, **kargs)
 
 
+    def _normalize(self, value):
+        if 'items' in dir(value):
+            value = dict(value.items())
+            for key in list(value.keys()):
+                value[key] = self._normalize(value[key])
+        if 'hex' in dir(value):
+            value = value.hex()
+        if isinstance(value, list):
+            value = [self._normalize(x) for x in value]
+        return value
+
+
+    def get_block_data(self, block_identifier, full_transactions=True, normalize=True):
+        """ Get a block data"""
+        data = self.web3.eth.getBlock(block_identifier, full_transactions = full_transactions)
+        if normalize:
+            data = self._normalize(data)
+        return data
+
+
     def block_timestamp(self, block):
         """ Block timestamp """
         block_timestamp = self.web3.eth.getBlock(block).timestamp
@@ -289,20 +309,8 @@ class NetworkBase():
 
     def get_transaction_receipt(self, transaction_hash):
         """ Get transaction receipt """
-
-        def normalize(value):
-            if 'items' in dir(value):
-                value = dict(value.items())
-                for key in list(value.keys()):
-                    value[key] = normalize(value[key])
-            if 'hex' in dir(value):
-                value = value.hex()
-            if isinstance(value, list):
-                value = [normalize(x) for x in value]
-            return value
-
         try:
-            return normalize(self.web3.eth.getTransactionReceipt(transaction_hash))
+            return self._normalize(self.web3.eth.getTransactionReceipt(transaction_hash))
         except TransactionNotFound:
             return None
 
