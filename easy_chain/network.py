@@ -1,8 +1,9 @@
 import sys, json, datetime
 from web3            import Web3, HTTPProvider
-from web3.exceptions import InvalidAddress, ValidationError, BadFunctionCallOutput, TransactionNotFound
+from web3.exceptions import InvalidAddress, ValidationError, BadFunctionCallOutput, TransactionNotFound, BlockNotFound
 from web3.middleware import geth_poa_middleware
 from os.path         import dirname, abspath
+from time            import sleep
 
 bkpath   = sys.path[:]
 base_dir = dirname(abspath(__file__))
@@ -146,6 +147,7 @@ class NetworkBase():
     ValidationError       = ValidationError
     BadFunctionCallOutput = BadFunctionCallOutput
     TransactionNotFound   = TransactionNotFound
+    BlockNotFound         = BlockNotFound
 
 
     def __init__(self, uri, chain_id, profile, poa=False, checksum=False):
@@ -282,6 +284,37 @@ class NetworkBase():
         if normalize:
             data = self._normalize(data)
         return data
+
+
+    def block_waiter(self, confirmations=10):
+        prev_data = self.get_block_data(self.block_number)
+        if confirmations:
+            confirm_prev_data = self.get_block_data(self.block_number - confirmations)
+        else:
+            confirm_prev_data = prev_data
+        time = confirm_time = 30
+        while True:
+            try:
+                data = self.get_block_data(prev_data['number'] + 1)
+            except self.BlockNotFound:
+                sleep(time/3)
+                continue
+            if confirmations:
+                confirm_data = self.get_block_data(confirm_prev_data['number'] + 1)
+            else:
+                confirm_data = data
+            time = data['timestamp'] - prev_data['timestamp']
+            data['time'] = time
+            confirm_time = confirm_data['timestamp'] - confirm_prev_data['timestamp']
+            confirm_data['time'] = confirm_time
+            out = {
+                'latest': data,
+                'confirmed': confirm_data,
+                'confirmations': confirmations
+            }
+            yield out
+            prev_data = data
+            confirm_prev_data = confirm_data
 
 
     def block_timestamp(self, block):
